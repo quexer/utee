@@ -6,12 +6,16 @@ import (
 	"net/http"
 )
 
-func MidSlowLog(limit int64) func(*http.Request, martini.Context) {
+func MidSlowLog(limit int) func(*http.Request, martini.Context) {
+    if limit <= 0{
+        log.Fatalln("[slow log] err:  bad limit")
+    }
+
 	return func(req *http.Request, c martini.Context) {
 		start := Tick()
 		defer func() {
 			t := Tick() - start
-			if t >= limit {
+			if t >= int64(limit) {
 				log.Printf("[slow] %3vms %s \n", t, req.RequestURI)
 			}
 		}()
