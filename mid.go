@@ -1,4 +1,4 @@
-package mpush
+package utee
 
 import (
 	"github.com/go-martini/martini"

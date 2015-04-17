@@ -1,4 +1,4 @@
-package mpush
+package utee
 
 import (
 	"crypto/md5"
