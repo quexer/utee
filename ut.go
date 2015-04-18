@@ -20,14 +20,14 @@ import (
 
 var (
 	//passwd md5
-	PlainMd5 = md5Str("")
+	PlainMd5 = Md5Str("")
 )
 
 func init() {
 	rand.Seed(time.Now().UTC().UnixNano())
 }
 
-func md5Str(salt string) func(string) string {
+func Md5Str(salt string) func(string) string {
 	return func(s string) string {
 		h := md5.New()
 		io.WriteString(h, s)
