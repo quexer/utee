@@ -12,13 +12,13 @@ const (
 )
 
 var (
-	httpClientThrottle = make(chan interface{}, MAX_HTTP_CLIENT_CONCURRENT)
+	HttpClientThrottle = make(chan interface{}, MAX_HTTP_CLIENT_CONCURRENT)
 )
 
 func HttpPost(postUrl string, q url.Values) ([]byte, error) {
-	httpClientThrottle <- nil
+    HttpClientThrottle <- nil
 	defer func() {
-		<-httpClientThrottle
+		<-HttpClientThrottle
 	}()
 
 	resp, err := http.PostForm(postUrl, q)
@@ -37,9 +37,9 @@ func HttpPost(postUrl string, q url.Values) ([]byte, error) {
 }
 
 func HttpGet(url string) ([]byte, error) {
-	httpClientThrottle <- nil
+    HttpClientThrottle <- nil
 	defer func() {
-		<-httpClientThrottle
+		<-HttpClientThrottle
 	}()
 	resp, err := http.Get(url)
 	if err != nil {
