@@ -16,7 +16,7 @@ var (
 )
 
 func HttpPost(postUrl string, q url.Values) ([]byte, error) {
-    HttpClientThrottle <- nil
+	HttpClientThrottle <- nil
 	defer func() {
 		<-HttpClientThrottle
 	}()
@@ -37,7 +37,7 @@ func HttpPost(postUrl string, q url.Values) ([]byte, error) {
 }
 
 func HttpGet(url string) ([]byte, error) {
-    HttpClientThrottle <- nil
+	HttpClientThrottle <- nil
 	defer func() {
 		<-HttpClientThrottle
 	}()

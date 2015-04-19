@@ -7,9 +7,9 @@ import (
 )
 
 func MidSlowLog(limit int) func(*http.Request, martini.Context) {
-    if limit <= 0{
-        log.Fatalln("[slow log] err:  bad limit")
-    }
+	if limit <= 0 {
+		log.Fatalln("[slow log] err:  bad limit")
+	}
 
 	return func(req *http.Request, c martini.Context) {
 		start := Tick()
