@@ -22,3 +22,8 @@ func MidSlowLog(limit int) func(*http.Request, martini.Context) {
 		c.Next()
 	}
 }
+
+func MidWeb(w http.ResponseWriter, c martini.Context) {
+	web := &Web{W: w}
+	c.Map(web)
+}

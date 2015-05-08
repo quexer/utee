@@ -163,12 +163,12 @@ func IsPemExpire(b []byte) bool {
 	block, _ := pem.Decode(b)
 	if block == nil {
 		fmt.Println("failed to parse certificate PEM")
-        return true
+		return true
 	}
 	cert, err := x509.ParseCertificate(block.Bytes)
 	if err != nil {
 		fmt.Println("failed to parse certificate: ", err)
-        return true
+		return true
 	}
 	return cert.NotAfter.Before(time.Now())
 }
