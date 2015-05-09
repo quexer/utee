@@ -27,3 +27,9 @@ func MidWeb(w http.ResponseWriter, c martini.Context) {
 	web := &Web{W: w}
 	c.Map(web)
 }
+
+func MidTextDefault(w http.ResponseWriter) {
+	if w.Header().Get("Content-Type") == "" {
+		w.Header().Set("Content-Type", "text/plain; charset=UTF-8")
+	}
+}
