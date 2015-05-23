@@ -58,8 +58,12 @@ func Truncate(s string, n int) string {
 	return string(l)
 }
 
-func Tick() int64 {
-	return time.Now().UnixNano() / 1e6
+func Tick(t ...time.Time) int64 {
+	if len(t) == 0 {
+		return time.Now().UnixNano() / 1e6
+	} else {
+		return t[0].UnixNano() / 1e6
+	}
 }
 
 func TickSec() int64 {

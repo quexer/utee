@@ -5,10 +5,14 @@ import (
 	"log"
 )
 
-func ConnectMongo(db string) *mgo.Session {
+func MongoConnect(db string) *mgo.Session {
 	session, err := mgo.Dial(db)
 	if err != nil {
 		log.Fatal(err)
 	}
 	return session
+}
+
+func MongoNotFound(err error) bool {
+	return mgo.ErrNotFound == err
 }
