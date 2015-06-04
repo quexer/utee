@@ -32,7 +32,7 @@ func Md5Str(salt string) func(string) string {
 		h := md5.New()
 		io.WriteString(h, s)
 		io.WriteString(h, salt)
-		return fmt.Sprintf("%x", h.Sum(nil))
+		return hex.EncodeToString(h.Sum(nil))
 	}
 }
 
@@ -109,11 +109,10 @@ func ToTimeMillis(fmt string, timeStr string) (int64, error) {
 	return data.UnixNano() / 1e6, nil
 }
 
-func Md5(s string) (r string) {
+func Md5(b []byte) []byte {
 	h := md5.New()
-	h.Write([]byte(s))
-	r = hex.EncodeToString(h.Sum(nil))
-	return
+	h.Write(b)
+	return h.Sum(nil)
 }
 
 // parse form into J
