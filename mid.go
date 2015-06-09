@@ -4,6 +4,9 @@ import (
 	"github.com/go-martini/martini"
 	"log"
 	"net/http"
+	"expvar"
+	"strconv"
+	"time"
 )
 
 func MidSlowLog(limit int) func(*http.Request, martini.Context) {
@@ -33,3 +36,32 @@ func MidTextDefault(w http.ResponseWriter) {
 		w.Header().Set("Content-Type", "text/plain; charset=UTF-8")
 	}
 }
+
+
+var(
+	expServerConcurrent = expvar.NewInt("z_utee_server_concurrent")
+	expServeCount       = expvar.NewInt("z_utee_serve_count")
+	expTps              = expvar.NewInt("z_utee_serve_tps")
+)
+
+
+func MidConcurrent() func(martini.Context) {
+	go func() {
+		lastSecond, _ := strconv.ParseInt(expServeCount.String(), 10, 64)
+		for range time.Tick(time.Second) {
+			countTotal, _ := strconv.ParseInt(expServeCount.String(), 10, 64)
+			expTps.Set(countTotal - lastSecond)
+			lastSecond = countTotal
+		}
+	}()
+
+	return func(c martini.Context) {
+		expServerConcurrent.Add(1)
+		defer func() {
+			expServerConcurrent.Add(-1)
+			expServeCount.Add(1)
+		}()
+		c.Next()
+	}
+}
+
