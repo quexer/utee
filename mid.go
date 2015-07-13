@@ -1,10 +1,10 @@
 package utee
 
 import (
+	"expvar"
 	"github.com/go-martini/martini"
 	"log"
 	"net/http"
-	"expvar"
 	"strconv"
 	"time"
 )
@@ -37,13 +37,11 @@ func MidTextDefault(w http.ResponseWriter) {
 	}
 }
 
-
-var(
+var (
 	expServerConcurrent = expvar.NewInt("z_utee_server_concurrent")
 	expServeCount       = expvar.NewInt("z_utee_serve_count")
 	expTps              = expvar.NewInt("z_utee_serve_tps")
 )
-
 
 func MidConcurrent() func(martini.Context) {
 	go func() {
@@ -64,4 +62,3 @@ func MidConcurrent() func(martini.Context) {
 		c.Next()
 	}
 }
-
