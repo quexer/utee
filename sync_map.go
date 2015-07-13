@@ -17,6 +17,23 @@ func (p *SyncMap) Put(key, val interface{}) {
 	p.m[key] = val
 }
 
+func (p *SyncMap) Remove(key interface{}) {
+	p.Lock()
+	defer p.Unlock()
+
+	if p.m == nil {
+		return
+	}
+	delete(p.m, key)
+}
+
+func (p *SyncMap) Clear() {
+	p.Lock()
+	defer p.Unlock()
+
+	p.m = nil
+}
+
 func (p *SyncMap) Len() int {
 	p.RLock()
 	defer p.RUnlock()

@@ -131,7 +131,7 @@ func (p *TimerCache) tryPop(tick int64, expireCb func(key, value interface{})) {
 		item := p.q[0]
 		if item.ttl > tick {
 			//no expire items
-//			log.Println("no expire items", item.ttl, tick)
+			//			log.Println("no expire items", item.ttl, tick)
 			return
 		}
 
