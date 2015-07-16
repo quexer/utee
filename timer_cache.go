@@ -139,7 +139,7 @@ func (p *TimerCache) tryPop(tick int64, expireCb func(key, value interface{})) {
 		delete(p.m, item.key)
 
 		//ignore dead item
-		if !item.dead {
+		if !item.dead && expireCb != nil {
 			go expireCb(item.key, item.value)
 		}
 	}
