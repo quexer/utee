@@ -43,7 +43,7 @@ var (
 	expTps              = expvar.NewInt("z_utee_serve_tps")
 )
 
-func MidConcurrent() func(martini.Context) {
+func MidConcurrent(concurrent ...int) func(http.ResponseWriter, martini.Context) {
 	go func() {
 		lastSecond, _ := strconv.ParseInt(expServeCount.String(), 10, 64)
 		for range time.Tick(time.Second) {
@@ -53,12 +53,35 @@ func MidConcurrent() func(martini.Context) {
 		}
 	}()
 
-	return func(c martini.Context) {
+	var ch chan string
+	if len(concurrent) > 0 {
+		if concurrent[0] > 0 {
+			ch = make(chan string, concurrent[0])
+		} else {
+			log.Fatalln("bad concurrent number", concurrent[0])
+		}
+	}
+	return func(w http.ResponseWriter, c martini.Context) {
 		expServerConcurrent.Add(1)
 		defer func() {
 			expServerConcurrent.Add(-1)
 			expServeCount.Add(1)
 		}()
-		c.Next()
+		if ch == nil {
+			c.Next()
+		} else {
+			select {
+			case ch <- "a":
+				func() {
+					defer func() {
+						<-ch
+					}()
+					c.Next()
+				}()
+			default:
+				log.Println("[warn] reach concurrent limit:", concurrent[0])
+				http.Error(w, "server is busy", 503)
+			}
+		}
 	}
 }
