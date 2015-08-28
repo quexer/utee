@@ -162,18 +162,16 @@ func DeleteMap(m map[string]interface{}, ks ...string) {
 	}
 }
 
-func IsPemExpire(b []byte) bool {
+func IsPemExpire(b []byte) (bool, error) {
 	block, _ := pem.Decode(b)
 	if block == nil {
-		fmt.Println("failed to parse certificate PEM")
-		return true
+		return false, errors.New("failed to parse certificate PEM")
 	}
 	cert, err := x509.ParseCertificate(block.Bytes)
 	if err != nil {
-		fmt.Println("failed to parse certificate: ", err)
-		return true
+		return false, err
 	}
-	return cert.NotAfter.Before(time.Now())
+	return cert.NotAfter.Before(time.Now()), nil
 }
 
 func NotFound(err error) bool {
