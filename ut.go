@@ -5,6 +5,7 @@ import (
 	"crypto/x509"
 	"encoding/hex"
 	"encoding/pem"
+	"errors"
 	"fmt"
 	mgo "gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
@@ -16,7 +17,6 @@ import (
 	"strings"
 	"time"
 	"unicode/utf8"
-	"errors"
 )
 
 var (
