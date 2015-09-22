@@ -144,3 +144,12 @@ func (p *TimerCache) tryPop(tick int64, expireCb func(key, value interface{})) {
 		}
 	}
 }
+
+func (p *TimerCache) Loop(cb func(key, value interface{})) {
+	if cb == nil {
+		return
+	}
+	for _, item := range p.m {
+		cb(item.key, item.value)
+	}
+}
