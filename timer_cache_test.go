@@ -1,6 +1,7 @@
 package utee
 
 import (
+	"fmt"
 	"log"
 	"testing"
 	"time"
@@ -24,6 +25,12 @@ func TestTimeCache(t *testing.T) {
 	if val := tc.Get(1); val != 3 {
 		t.Error("1=> should be 3", val)
 	}
+
+	cb := func(k, v interface{}) {
+		fmt.Println("@k:", k, "@v:", v)
+	}
+
+	tc.Loop(cb)
 
 	time.Sleep(4 * time.Second)
 
