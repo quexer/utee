@@ -26,7 +26,7 @@ func TestTimeCache(t *testing.T) {
 		t.Error("1=> should be 3", val)
 	}
 
-	for k := range tc.Keys() {
+	for _, k := range tc.Keys() {
 		fmt.Println("@k:", k)
 	}
 
