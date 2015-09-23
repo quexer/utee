@@ -148,7 +148,7 @@ func (p *TimerCache) tryPop(tick int64, expireCb func(key, value interface{})) {
 func (p *TimerCache) Keys() []interface{} {
 	p.RLock()
 	defer p.RUnlock()
-	keys := []interface{}{}
+	keys := make([]interface{}, 0, len(p.m))
 	for k, _ := range p.m {
 		keys = append(keys, k)
 	}
