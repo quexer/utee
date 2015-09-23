@@ -149,8 +149,8 @@ func (p *TimerCache) Keys() []interface{} {
 	p.RLock()
 	defer p.RUnlock()
 	keys := []interface{}{}
-	for _, item := range p.m {
-		keys = append(keys, item.key)
+	for k, _ := range p.m {
+		keys = append(keys, k)
 	}
 	return keys
 }
