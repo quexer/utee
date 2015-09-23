@@ -26,11 +26,9 @@ func TestTimeCache(t *testing.T) {
 		t.Error("1=> should be 3", val)
 	}
 
-	cb := func(k, v interface{}) {
-		fmt.Println("@k:", k, "@v:", v)
+	for k := range tc.Keys() {
+		fmt.Println("@k:", k)
 	}
-
-	tc.Loop(cb)
 
 	time.Sleep(4 * time.Second)
 
