@@ -2,6 +2,7 @@ package utee
 
 import (
 	"fmt"
+	"golang.org/x/net/http2"
 	"io/ioutil"
 	"net/http"
 	"net/url"
@@ -10,13 +11,21 @@ import (
 
 const (
 	MAX_HTTP_CLIENT_CONCURRENT = 1000
+	X_2_DATA                   = "X-2-DATA" //header key for http2 get
 )
 
 var (
 	HttpClientThrottle = make(chan interface{}, MAX_HTTP_CLIENT_CONCURRENT)
+	http2Client        = &http.Client{
+		Transport: &http2.Transport{InsecureTLSDial: true},
+	}
 )
 
 func HttpPost(postUrl string, q url.Values, credential ...string) ([]byte, error) {
+	return httpPost(1, postUrl, q, credential...)
+}
+
+func httpPost(v int, postUrl string, q url.Values, credential ...string) ([]byte, error) {
 	HttpClientThrottle <- nil
 	defer func() {
 		<-HttpClientThrottle
@@ -24,17 +33,23 @@ func HttpPost(postUrl string, q url.Values, credential ...string) ([]byte, error
 
 	var resp *http.Response
 	var err error
-	if len(credential) == 2 {
-		req, err := http.NewRequest("POST", postUrl, strings.NewReader(q.Encode()))
-		if err != nil {
-			return nil, fmt.Errorf("[http] err %s, %s\n", postUrl, err)
-		}
-		req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
-		req.SetBasicAuth(credential[0], credential[1])
-		resp, err = http.DefaultClient.Do(req)
-	} else {
-		resp, err = http.PostForm(postUrl, q)
+	req, err := http.NewRequest("POST", postUrl, strings.NewReader(q.Encode()))
+	if err != nil {
+		return nil, fmt.Errorf("[http] err %s, %s\n", postUrl, err)
 	}
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+	if len(credential) == 2 {
+		req.SetBasicAuth(credential[0], credential[1])
+	}
+
+	var client *http.Client
+	if v == 1 {
+		client = http.DefaultClient
+	} else {
+		client = http2Client
+	}
+
+	resp, err = client.Do(req)
 
 	if err != nil {
 		return nil, fmt.Errorf("[http] err %s, %s\n", postUrl, err)
@@ -51,6 +66,10 @@ func HttpPost(postUrl string, q url.Values, credential ...string) ([]byte, error
 }
 
 func HttpGet(getUrl string, credential ...string) ([]byte, error) {
+	return httpGet(1, getUrl, nil, credential...)
+}
+
+func httpGet(v int, getUrl string, q url.Values, credential ...string) ([]byte, error) {
 	HttpClientThrottle <- nil
 	defer func() {
 		<-HttpClientThrottle
@@ -58,16 +77,25 @@ func HttpGet(getUrl string, credential ...string) ([]byte, error) {
 
 	var resp *http.Response
 	var err error
-	if len(credential) == 2 {
-		req, err := http.NewRequest("GET", getUrl, nil)
-		if err != nil {
-			return nil, fmt.Errorf("[http] err %s, %s\n", getUrl, err)
-		}
-		req.SetBasicAuth(credential[0], credential[1])
-		resp, err = http.DefaultClient.Do(req)
-	} else {
-		resp, err = http.Get(getUrl)
+	req, err := http.NewRequest("GET", getUrl, nil)
+	if err != nil {
+		return nil, fmt.Errorf("[http] err %s, %s\n", getUrl, err)
 	}
+	if len(credential) == 2 {
+		req.SetBasicAuth(credential[0], credential[1])
+	}
+
+	var client *http.Client
+	if v == 1 {
+		client = http.DefaultClient
+	} else {
+		client = http2Client
+		if q != nil {
+			req.Header.Add(X_2_DATA, q.Encode())
+		}
+	}
+
+	resp, err = client.Do(req)
 
 	if err != nil {
 		return nil, err
@@ -78,4 +106,8 @@ func HttpGet(getUrl string, credential ...string) ([]byte, error) {
 		return nil, fmt.Errorf("[http get] status err %s, %d\n", getUrl, resp.StatusCode)
 	}
 	return ioutil.ReadAll(resp.Body)
+}
+
+func Http2Get(getUrl string, q url.Values, credential ...string) ([]byte, error) {
+	return httpGet(2, getUrl, q, credential...)
 }
