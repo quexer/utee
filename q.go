@@ -60,6 +60,10 @@ func (p MemQueue) Len() int {
 	return len(p)
 }
 
+func (p MemQueue) Cap() int {
+	return cap(p)
+}
+
 func qname(name string) string {
 	return "q" + name
 }
@@ -141,14 +145,17 @@ func (p *SimpleRedisQueue) Enq(data interface{}) error {
 func (p *SimpleRedisQueue) Deq() (interface{}, error) {
 	c := p.pool.Get()
 	defer c.Close()
-
-	reply, err := c.Do("LPOP", p.name)
-	if reply == nil && err == nil {
-		return nil, redis.ErrNil
-	}
-	return reply, err
+	return c.Do("LPOP", p.name)
 }
 
 func (p *SimpleRedisQueue) BufferLen() int {
 	return p.buffer.Len()
+}
+
+func (p *SimpleRedisQueue) BufferCap() int {
+	return p.buffer.Cap()
+}
+
+func (p *SimpleRedisQueue) PollSize() int {
+	return p.pool.ActiveCount()
 }
