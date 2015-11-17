@@ -37,7 +37,7 @@ func (p MemQueue) Deq() interface{} {
 //dequeue less than n in a batch
 func (p MemQueue) DeqN(n int) []interface{} {
 	if n <= 0 {
-		log.Println("bug, n must > 0")
+		log.Println("[MemQueue] deqn err, n must > 0")
 		return nil
 	}
 
