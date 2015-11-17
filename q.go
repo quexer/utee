@@ -79,15 +79,26 @@ type SimpleRedisQueue struct {
 //server: redis server address
 //auth: redis auth
 //name: queue name in redis
-//concurrent: concurrent number redis enqueue operation
-//batch: batch enqueue number
-//buffer: memory buffer capacity
-func NewSimpleRedisQueue(server, auth, name string, concurrent, batch, buffer int) *SimpleRedisQueue {
+//concurrent: concurrent number redis enqueue operation, must >=1
+//enqBatch: batch enqueue number, must >=1
+//buffer: memory buffer capacity, must >= 0
+func NewSimpleRedisQueue(server, auth, name string, concurrent, enqBatch, buffer int) *SimpleRedisQueue {
+	if concurrent < 1 {
+		log.Fatal("concurrent must >= 1")
+	}
+	if enqBatch < 1 {
+		log.Fatal("batch must >= 1")
+	}
+
+	if buffer < 0 {
+		log.Fatal("buffer must >= 0")
+	}
+
 	q := &SimpleRedisQueue{
 		name:   qname(name),
 		pool:   CreateRedisPool(concurrent, server, auth),
 		buffer: NewMemQueue(buffer),
-		batch:  batch,
+		batch:  enqBatch,
 	}
 	for i := 0; i < concurrent; i++ {
 		go q.enqLoop()
