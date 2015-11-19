@@ -1,6 +1,7 @@
 package utee
 
 import (
+	"crypto/tls"
 	"fmt"
 	"golang.org/x/net/http2"
 	"io/ioutil"
@@ -17,7 +18,7 @@ const (
 var (
 	HttpClientThrottle = make(chan interface{}, MAX_HTTP_CLIENT_CONCURRENT)
 	http2Client        = &http.Client{
-		Transport: &http2.Transport{},
+		Transport: &http2.Transport{TLSClientConfig: &tls.Config{InsecureSkipVerify: true}},
 	}
 )
 
