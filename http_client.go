@@ -12,8 +12,8 @@ import (
 
 const (
 	MAX_HTTP_CLIENT_CONCURRENT = 1000
-	X_2_DATA                   = "X-2-DATA" //header key for http2 get
 )
+
 
 var (
 	HttpClientThrottle = make(chan interface{}, MAX_HTTP_CLIENT_CONCURRENT)
@@ -24,6 +24,10 @@ var (
 
 func HttpPost(postUrl string, q url.Values, credential ...string) ([]byte, error) {
 	return httpPost(1, postUrl, q, credential...)
+}
+
+func Http2Post(postUrl string, q url.Values, credential ...string) ([]byte, error) {
+	return httpPost(2, postUrl, q, credential...)
 }
 
 func httpPost(v int, postUrl string, q url.Values, credential ...string) ([]byte, error) {
@@ -67,10 +71,14 @@ func httpPost(v int, postUrl string, q url.Values, credential ...string) ([]byte
 }
 
 func HttpGet(getUrl string, credential ...string) ([]byte, error) {
-	return httpGet(1, getUrl, nil, credential...)
+	return httpGet(1, getUrl, credential...)
 }
 
-func httpGet(v int, getUrl string, q url.Values, credential ...string) ([]byte, error) {
+func Http2Get(getUrl string, credential ...string) ([]byte, error) {
+	return httpGet(1, getUrl, credential...)
+}
+
+func httpGet(v int, getUrl string, credential ...string) ([]byte, error) {
 	HttpClientThrottle <- nil
 	defer func() {
 		<-HttpClientThrottle
@@ -91,9 +99,6 @@ func httpGet(v int, getUrl string, q url.Values, credential ...string) ([]byte, 
 		client = http.DefaultClient
 	} else {
 		client = http2Client
-		if q != nil {
-			req.Header.Add(X_2_DATA, q.Encode())
-		}
 	}
 
 	resp, err = client.Do(req)
@@ -107,8 +112,4 @@ func httpGet(v int, getUrl string, q url.Values, credential ...string) ([]byte, 
 		return nil, fmt.Errorf("[http get] status err %s, %d\n", getUrl, resp.StatusCode)
 	}
 	return ioutil.ReadAll(resp.Body)
-}
-
-func Http2Get(getUrl string, q url.Values, credential ...string) ([]byte, error) {
-	return httpGet(2, getUrl, q, credential...)
 }
