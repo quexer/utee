@@ -16,13 +16,20 @@ func MidSlowLog(limit int) func(*http.Request, martini.Context) {
 
 	return func(req *http.Request, c martini.Context) {
 		start := Tick()
+		tm := &TimeMatrix{}
+		tm.Rec("start")
+		c.Map(tm)
 		defer func() {
 			t := Tick() - start
 			if t >= int64(limit) {
 				log.Printf("[slow] %3vms %s \n", t, req.RequestURI)
+				if Env("TIME_MATRIX", false, false) != "" {
+					tm.Print()
+				}
 			}
 		}()
 		c.Next()
+		tm.Rec("end")
 	}
 }
 
