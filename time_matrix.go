@@ -1,7 +1,9 @@
 package utee
 
 import (
+	"fmt"
 	"log"
+	"strings"
 	"sync"
 )
 
@@ -22,16 +24,18 @@ func (p *TimeMatrix) Rec(name string) {
 
 func (p *TimeMatrix) Print() {
 	p.Lock()
-	log.Println("    time matrix")
 	if len(p.m) < 2 {
 		return
 	}
+
+	l := []string{"   time matrix"}
 	for i, val := range p.m {
 		if i == 0 {
 			continue
 		}
-
-		log.Printf("    %20v: %8vms\n", p.m[i-1].name+"~"+val.name, val.tick-p.m[i-1].tick)
+		s := fmt.Sprintf("%35v: %8vms", p.m[i-1].name+"~"+val.name, val.tick-p.m[i-1].tick)
+		l = append(l, s)
 	}
+	log.Println(strings.Join(l, "\n"))
 	p.Unlock()
 }

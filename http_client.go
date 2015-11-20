@@ -14,7 +14,6 @@ const (
 	MAX_HTTP_CLIENT_CONCURRENT = 1000
 )
 
-
 var (
 	HttpClientThrottle = make(chan interface{}, MAX_HTTP_CLIENT_CONCURRENT)
 	http2Client        = &http.Client{
