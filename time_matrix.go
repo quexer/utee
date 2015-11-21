@@ -28,12 +28,12 @@ func (p *TimeMatrix) Print() {
 		return
 	}
 
-	l := []string{"   time matrix"}
+	l := []string{"time matrix"}
 	for i, val := range p.m {
 		if i == 0 {
 			continue
 		}
-		s := fmt.Sprintf("%35v: %8vms", p.m[i-1].name+"~"+val.name, val.tick-p.m[i-1].tick)
+		s := fmt.Sprintf("%31v: %5vms", p.m[i-1].name+"~"+val.name, val.tick-p.m[i-1].tick)
 		l = append(l, s)
 	}
 	log.Println(strings.Join(l, "\n"))
