@@ -15,12 +15,13 @@ func NewMemQueue(cap int) MemQueue {
 	return make(chan interface{}, cap)
 }
 
-func NewLeakMemQueue(cap, concurrent int, cb func(interface{})) MemQueue {
+//create memory queue, auto-leak element concurrently to worker
+func NewLeakMemQueue(cap, concurrent int, worker func(interface{})) MemQueue {
 	q := NewMemQueue(cap)
 
 	f := func() {
 		for {
-			cb(q.Deq())
+			worker(q.Deq())
 		}
 	}
 
