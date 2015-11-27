@@ -15,6 +15,21 @@ func NewMemQueue(cap int) MemQueue {
 	return make(chan interface{}, cap)
 }
 
+func NewLeakMemQueue(cap, concurrent int, cb func(interface{})) MemQueue {
+	q := NewMemQueue(cap)
+
+	f := func() {
+		for {
+			cb(q.Deq())
+		}
+	}
+
+	for i := 0; i < concurrent; i++ {
+		go f()
+	}
+	return q
+}
+
 //enqueue, block if queue is full
 func (p MemQueue) EnqBlocking(data interface{}) {
 	p <- data
