@@ -59,17 +59,17 @@ func (p MemQueue) DeqN(n int) []interface{} {
 
 	var l []interface{}
 
-	select {
-	case data := <-p:
-		l = append(l, data)
-		if len(l) == n {
-			break
+	for {
+		select {
+		case data := <-p:
+			l = append(l, data)
+			if len(l) == n {
+				return l
+			}
+		default:
+			return l
 		}
-	default:
-		break
 	}
-
-	return l
 }
 
 func (p MemQueue) Len() int {
