@@ -74,7 +74,7 @@ func HttpGet(getUrl string, credential ...string) ([]byte, error) {
 }
 
 func Http2Get(getUrl string, credential ...string) ([]byte, error) {
-	return httpGet(1, getUrl, credential...)
+	return httpGet(2, getUrl, credential...)
 }
 
 func httpGet(v int, getUrl string, credential ...string) ([]byte, error) {
