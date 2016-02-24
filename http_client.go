@@ -15,13 +15,20 @@ const (
 
 var (
 	HttpClientThrottle = make(chan interface{}, MAX_HTTP_CLIENT_CONCURRENT)
+	http2Client        = &http.Client{
+		Transport: &http.Transport{TLSClientConfig: &tls.Config{InsecureSkipVerify: true}},
+	}
 )
 
-func init() {
-	http.DefaultClient.Transport = &http.Transport{TLSClientConfig: &tls.Config{InsecureSkipVerify: true}}
+func HttpPost(postUrl string, q url.Values, credential ...string) ([]byte, error) {
+	return httpPost(1, postUrl, q, credential...)
 }
 
-func HttpPost(postUrl string, q url.Values, credential ...string) ([]byte, error) {
+func Http2Post(postUrl string, q url.Values, credential ...string) ([]byte, error) {
+	return httpPost(2, postUrl, q, credential...)
+}
+
+func httpPost(v int, postUrl string, q url.Values, credential ...string) ([]byte, error) {
 	HttpClientThrottle <- nil
 	defer func() {
 		<-HttpClientThrottle
@@ -38,7 +45,15 @@ func HttpPost(postUrl string, q url.Values, credential ...string) ([]byte, error
 		req.SetBasicAuth(credential[0], credential[1])
 	}
 
-	resp, err = http.DefaultClient.Do(req)
+	var client *http.Client
+	if v == 1 {
+		client = http.DefaultClient
+	} else {
+		client = http2Client
+	}
+
+	resp, err = client.Do(req)
+
 	if err != nil {
 		return nil, fmt.Errorf("[http] err %s, %s\n", postUrl, err)
 	}
@@ -54,6 +69,14 @@ func HttpPost(postUrl string, q url.Values, credential ...string) ([]byte, error
 }
 
 func HttpGet(getUrl string, credential ...string) ([]byte, error) {
+	return httpGet(1, getUrl, credential...)
+}
+
+func Http2Get(getUrl string, credential ...string) ([]byte, error) {
+	return httpGet(2, getUrl, credential...)
+}
+
+func httpGet(v int, getUrl string, credential ...string) ([]byte, error) {
 	HttpClientThrottle <- nil
 	defer func() {
 		<-HttpClientThrottle
@@ -69,7 +92,14 @@ func HttpGet(getUrl string, credential ...string) ([]byte, error) {
 		req.SetBasicAuth(credential[0], credential[1])
 	}
 
-	resp, err = http.DefaultClient.Do(req)
+	var client *http.Client
+	if v == 1 {
+		client = http.DefaultClient
+	} else {
+		client = http2Client
+	}
+
+	resp, err = client.Do(req)
 
 	if err != nil {
 		return nil, err
