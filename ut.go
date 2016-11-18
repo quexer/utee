@@ -44,10 +44,16 @@ func Chk(err error) {
 	}
 }
 
-func Log(prefix string, err error) {
-	if err != nil {
-		log.Println(prefix, err)
+func Log(err error, prefix ...string) {
+	if err == nil {
+		return
 	}
+
+	s := ""
+	if len(prefix) > 0 {
+		s = prefix[0]
+	}
+	log.Println(s, err)
 }
 
 //truncate string
