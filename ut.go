@@ -10,6 +10,7 @@ import (
 	mgo "gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 	"io"
+	"log"
 	"math/rand"
 	"net/http"
 	"net/smtp"
@@ -40,6 +41,12 @@ func Md5Str(salt string) func(string) string {
 func Chk(err error) {
 	if err != nil {
 		panic(err)
+	}
+}
+
+func Log(prefix string, err error) {
+	if err != nil {
+		log.Println(prefix, err)
 	}
 }
 
