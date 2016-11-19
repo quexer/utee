@@ -38,9 +38,6 @@ func (p *SyncMap) Len() int {
 	p.RLock()
 	defer p.RUnlock()
 
-	if p.m == nil {
-		return 0
-	}
 	return len(p.m)
 }
 
