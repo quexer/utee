@@ -3,7 +3,6 @@ package utee
 import (
 	"crypto/tls"
 	"fmt"
-	"golang.org/x/net/http2"
 	"io/ioutil"
 	"net/http"
 	"net/url"
@@ -16,20 +15,12 @@ const (
 
 var (
 	HttpClientThrottle = make(chan interface{}, MAX_HTTP_CLIENT_CONCURRENT)
-	http2Client        = &http.Client{
-		Transport: &http2.Transport{TLSClientConfig: &tls.Config{InsecureSkipVerify: true}},
+	insecureClient     = &http.Client{
+		Transport: &http.Transport{TLSClientConfig: &tls.Config{InsecureSkipVerify: true}},
 	}
 )
 
 func HttpPost(postUrl string, q url.Values, credential ...string) ([]byte, error) {
-	return httpPost(1, postUrl, q, credential...)
-}
-
-func Http2Post(postUrl string, q url.Values, credential ...string) ([]byte, error) {
-	return httpPost(2, postUrl, q, credential...)
-}
-
-func httpPost(v int, postUrl string, q url.Values, credential ...string) ([]byte, error) {
 	HttpClientThrottle <- nil
 	defer func() {
 		<-HttpClientThrottle
@@ -46,14 +37,7 @@ func httpPost(v int, postUrl string, q url.Values, credential ...string) ([]byte
 		req.SetBasicAuth(credential[0], credential[1])
 	}
 
-	var client *http.Client
-	if v == 1 {
-		client = http.DefaultClient
-	} else {
-		client = http2Client
-	}
-
-	resp, err = client.Do(req)
+	resp, err = insecureClient.Do(req)
 
 	if err != nil {
 		return nil, fmt.Errorf("[http] err %s, %s", postUrl, err)
@@ -70,14 +54,6 @@ func httpPost(v int, postUrl string, q url.Values, credential ...string) ([]byte
 }
 
 func HttpGet(getUrl string, credential ...string) ([]byte, error) {
-	return httpGet(1, getUrl, credential...)
-}
-
-func Http2Get(getUrl string, credential ...string) ([]byte, error) {
-	return httpGet(2, getUrl, credential...)
-}
-
-func httpGet(v int, getUrl string, credential ...string) ([]byte, error) {
 	HttpClientThrottle <- nil
 	defer func() {
 		<-HttpClientThrottle
@@ -93,14 +69,7 @@ func httpGet(v int, getUrl string, credential ...string) ([]byte, error) {
 		req.SetBasicAuth(credential[0], credential[1])
 	}
 
-	var client *http.Client
-	if v == 1 {
-		client = http.DefaultClient
-	} else {
-		client = http2Client
-	}
-
-	resp, err = client.Do(req)
+	resp, err = insecureClient.Do(req)
 
 	if err != nil {
 		return nil, err
