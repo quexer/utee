@@ -217,7 +217,7 @@ func SendMail(user, password, host, to, subject, body, mailtype string) error {
 	return err
 }
 
-func ParseUrl(s string) (string, int, error) {
+func ParseAddr(s string) (string, int, error) {
 	a := strings.Split(s, ":")
 	if len(a) != 2 {
 		return "", 0, fmt.Errorf("bad url %s", s)
