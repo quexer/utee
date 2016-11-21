@@ -51,3 +51,14 @@ func (p *SyncMap) Get(key interface{}) (interface{}, bool) {
 	val, ok := p.m[key]
 	return val, ok
 }
+
+func (p *SyncMap) Keys() []interface{} {
+	p.RLock()
+	defer p.RUnlock()
+
+	l := make([]interface{}, len(p.m))
+	for k := range p.m {
+		l = append(l, k)
+	}
+	return l
+}
