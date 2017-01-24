@@ -7,8 +7,6 @@ import (
 	"encoding/pem"
 	"errors"
 	"fmt"
-	mgo "gopkg.in/mgo.v2"
-	"gopkg.in/mgo.v2/bson"
 	"io"
 	"log"
 	"math/rand"
@@ -106,16 +104,7 @@ func ContainsInf(s []interface{}, e interface{}) bool {
 	return false
 }
 
-func ContainsObjectId(s []bson.ObjectId, e string) bool {
-	for _, a := range s {
-		if a.Hex() == e {
-			return true
-		}
-	}
-	return false
-}
-
-func ToTimeMillis(fmt string, timeStr string) (int64, error) {
+func Millis(fmt string, timeStr string) (int64, error) {
 	data, err := time.Parse(fmt, timeStr)
 	if err != nil {
 		return 0, err
@@ -186,10 +175,6 @@ func IsPemExpire(b []byte) (bool, error) {
 		return false, err
 	}
 	return cert.NotAfter.Before(time.Now()), nil
-}
-
-func NotFound(err error) bool {
-	return err == mgo.ErrNotFound
 }
 
 func Shuffle(src []string) []string {
