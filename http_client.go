@@ -14,17 +14,15 @@ const (
 )
 
 var (
-	HttpClientThrottle = make(chan interface{}, MAX_HTTP_CLIENT_CONCURRENT)
+	httpClientThrottle = NewThrottle(MAX_HTTP_CLIENT_CONCURRENT)
 	insecureClient     = &http.Client{
 		Transport: &http.Transport{TLSClientConfig: &tls.Config{InsecureSkipVerify: true}},
 	}
 )
 
 func HttpPost(postUrl string, q url.Values, credential ...string) ([]byte, error) {
-	HttpClientThrottle <- nil
-	defer func() {
-		<-HttpClientThrottle
-	}()
+	httpClientThrottle.Acquire()
+	defer httpClientThrottle.Release()
 
 	var resp *http.Response
 	var err error
@@ -54,10 +52,8 @@ func HttpPost(postUrl string, q url.Values, credential ...string) ([]byte, error
 }
 
 func HttpGet(getUrl string, credential ...string) ([]byte, error) {
-	HttpClientThrottle <- nil
-	defer func() {
-		<-HttpClientThrottle
-	}()
+	httpClientThrottle.Acquire()
+	defer httpClientThrottle.Release()
 
 	var resp *http.Response
 	var err error
