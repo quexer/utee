@@ -252,3 +252,19 @@ func SplitSlice(a []string, n int) [][]string {
 	}
 	return result
 }
+
+func IntToInf(src []int) []interface{} {
+	result := []interface{}{}
+	for _, v := range src {
+		result = append(result, v)
+	}
+	return result
+}
+
+func StrToInf(src []string) []interface{} {
+	result := []interface{}{}
+	for _, v := range src {
+		result = append(result, v)
+	}
+	return result
+}
