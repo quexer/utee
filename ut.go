@@ -104,6 +104,42 @@ func ContainsInf(s []interface{}, e interface{}) bool {
 	return false
 }
 
+func ContainsInt(s []int, e int) bool {
+	for _, a := range s {
+		if a == e {
+			return true
+		}
+	}
+	return false
+}
+
+func IndexOf(s []string, e string) int {
+	for i, a := range s {
+		if a == e {
+			return i
+		}
+	}
+	return -1
+}
+
+func IndexOfInf(s []interface{}, e interface{}) int {
+	for i, a := range s {
+		if a == e {
+			return i
+		}
+	}
+	return -1
+}
+
+func IndexOfInt(s []int, e int) int {
+	for i, a := range s {
+		if a == e {
+			return i
+		}
+	}
+	return -1
+}
+
 func Millis(fmt string, timeStr string) (int64, error) {
 	data, err := time.Parse(fmt, timeStr)
 	if err != nil {
