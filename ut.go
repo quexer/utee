@@ -21,8 +21,8 @@ import (
 )
 
 var (
-	//passwd md5
-	PlainMd5 = Md5Str("")
+	PlainMd5  = Md5Str("")
+	PlainSha1 = Sha1Str("")
 )
 
 func init() {
