@@ -2,11 +2,13 @@ package utee
 
 import (
 	"crypto/md5"
+	"crypto/sha1"
 	"crypto/x509"
 	"encoding/hex"
 	"encoding/pem"
 	"errors"
 	"fmt"
+	"hash"
 	"io"
 	"log"
 	"math/rand"
@@ -28,8 +30,15 @@ func init() {
 }
 
 func Md5Str(salt string) func(string) string {
+	return DigestStr(md5.New(), salt)
+}
+
+func Sha1Str(salt string) func(string) string {
+	return DigestStr(sha1.New(), salt)
+}
+
+func DigestStr(h hash.Hash, salt string) func(string) string {
 	return func(s string) string {
-		h := md5.New()
 		io.WriteString(h, s)
 		io.WriteString(h, salt)
 		return hex.EncodeToString(h.Sum(nil))
