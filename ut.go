@@ -1,8 +1,10 @@
 package utee
 
 import (
+	"crypto/hmac"
 	"crypto/md5"
 	"crypto/sha1"
+	"crypto/sha256"
 	"crypto/x509"
 	"encoding/hex"
 	"encoding/pem"
@@ -44,6 +46,21 @@ func Sha1Str(salt string) func(string) string {
 		io.WriteString(h, salt)
 		return hex.EncodeToString(h.Sum(nil))
 	}
+}
+
+func Sha256Str(salt string) func(string) string {
+	return func(s string) string {
+		h := sha256.New()
+		io.WriteString(h, s)
+		io.WriteString(h, salt)
+		return hex.EncodeToString(h.Sum(nil))
+	}
+}
+
+func HmacSha256(s string, key string) string {
+	h := hmac.New(sha256.New, []byte(key))
+	io.WriteString(h, s)
+	return hex.EncodeToString(h.Sum(nil))
 }
 
 func Chk(err error) {
