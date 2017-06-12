@@ -288,6 +288,20 @@ func Unique(data []interface{}) []interface{} {
 	return l
 }
 
+func UniqueInt(data []int) []int {
+	m := map[int]string{}
+
+	for _, d := range data {
+		m[d] = "0"
+	}
+
+	l := []int{}
+	for key := range m {
+		l = append(l, key)
+	}
+	return l
+}
+
 func UniqueStr(data []string) []string {
 	m := map[string]string{}
 
