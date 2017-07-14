@@ -83,9 +83,13 @@ func Log(err error, prefix ...string) {
 
 //truncate string
 func Truncate(s string, n int) string {
-	length := utf8.RuneCountInString(s)
-	if length <= n || n < 0 {
+	if n <= 0 {
 		return ""
+	}
+
+	length := utf8.RuneCountInString(s)
+	if length <= n{
+		return s
 	}
 
 	l := []rune{}

@@ -5,6 +5,12 @@ import (
 	"testing"
 )
 
+func TestTruncate(t *testing.T) {
+	if s := Truncate("中文test", 10); s != "中文test"{
+		t.Error("no truncate", s)
+	}
+}
+
 func TestSplitSlice(t *testing.T) {
 	a := SplitSlice(nil, 5)
 	if len(a) != 1 {
