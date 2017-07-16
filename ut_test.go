@@ -6,7 +6,7 @@ import (
 )
 
 func TestTruncate(t *testing.T) {
-	if s := Truncate("中文test", 10); s != "中文test"{
+	if s := Truncate("中文test", 10); s != "中文test" {
 		t.Error("no truncate", s)
 	}
 }

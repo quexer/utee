@@ -88,7 +88,7 @@ func Truncate(s string, n int) string {
 	}
 
 	length := utf8.RuneCountInString(s)
-	if length <= n{
+	if length <= n {
 		return s
 	}
 
