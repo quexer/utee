@@ -2,6 +2,7 @@ package utee
 
 import (
 	"crypto/tls"
+	"errors"
 	"fmt"
 	"io"
 	"io/ioutil"
@@ -14,8 +15,8 @@ import (
 const (
 	MAX_HTTP_CLIENT_CONCURRENT = 1000
 
-	Content_Type_Form = "application/x-www-form-urlencoded"
-	Content_Type_Json = "application/json; charset=utf-8"
+	ContentTypeForm = "application/x-www-form-urlencoded"
+	ContentTypeJson = "application/json; charset=utf-8"
 )
 
 var (
@@ -24,6 +25,7 @@ var (
 		Timeout:   15 * time.Second,
 		Transport: &http.Transport{TLSClientConfig: &tls.Config{InsecureSkipVerify: true}},
 	}
+	ErrEmptyHeaderName = errors.New("header name must not be empty")
 )
 
 type BasicAuth struct {
@@ -37,13 +39,13 @@ type HttpOpt struct {
 }
 
 func HttpPost2(postUrl string, contentType string, body io.Reader, opt *HttpOpt) ([]byte, error) {
-	contentType = strings.TrimSpace(contentType)
-	if contentType == "" {
-		contentType = Content_Type_Form
-	}
-
 	httpClientThrottle.Acquire()
 	defer httpClientThrottle.Release()
+
+	contentType = strings.TrimSpace(contentType)
+	if contentType == "" {
+		contentType = ContentTypeForm
+	}
 
 	var resp *http.Response
 	var err error
@@ -57,7 +59,7 @@ func HttpPost2(postUrl string, contentType string, body io.Reader, opt *HttpOpt)
 		for k, v := range opt.Headers {
 			k := strings.TrimSpace(k)
 			if k == "" {
-				continue
+				return nil, ErrEmptyHeaderName
 			}
 			if strings.ToLower(k) == "content-type" {
 				continue
