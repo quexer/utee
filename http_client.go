@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
+	"time"
 )
 
 const (
@@ -16,6 +17,7 @@ const (
 var (
 	httpClientThrottle = NewThrottle(MAX_HTTP_CLIENT_CONCURRENT)
 	insecureClient     = &http.Client{
+		Timeout:   15 * time.Second,
 		Transport: &http.Transport{TLSClientConfig: &tls.Config{InsecureSkipVerify: true}},
 	}
 )
