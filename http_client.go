@@ -57,14 +57,13 @@ func HttpPost2(postUrl string, contentType string, body io.Reader, opt *HttpOpt)
 
 	if opt != nil {
 		for k, v := range opt.Headers {
-			k := strings.TrimSpace(k)
+			k := strings.ToLower(strings.TrimSpace(k))
 			if k == "" {
 				return nil, ErrEmptyHeaderName
 			}
-			if strings.ToLower(k) == "content-type" {
+			if k == "content-type" {
 				continue
 			}
-
 			req.Header.Set(strings.Title(k), v)
 		}
 
