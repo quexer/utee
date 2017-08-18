@@ -91,6 +91,52 @@ func HttpPost2(postUrl string, contentType string, body io.Reader, opt *HttpOpt)
 	return b, nil
 }
 
+func HttpGet2(getUrl string, contentType string, opt *HttpOpt) ([]byte, error) {
+	httpClientThrottle.Acquire()
+	defer httpClientThrottle.Release()
+
+	var resp *http.Response
+	var err error
+	req, err := http.NewRequest("GET", getUrl, nil)
+	if err != nil {
+		return nil, fmt.Errorf("[http] err %s, %s\n", getUrl, err)
+	}
+
+	contentType = strings.TrimSpace(contentType)
+	if contentType != "" {
+		req.Header.Set("Content-Type", contentType)
+	}
+
+	if opt != nil {
+		for k, v := range opt.Headers {
+			k := strings.ToLower(strings.TrimSpace(k))
+			if k == "" {
+				return nil, ErrEmptyHeaderName
+			}
+			if k == "content-type" {
+				continue
+			}
+			req.Header.Set(strings.Title(k), v)
+		}
+
+		if opt.BasicAuth != nil {
+			req.SetBasicAuth(opt.BasicAuth.Username, opt.BasicAuth.Password)
+		}
+	}
+
+	resp, err = insecureClient.Do(req)
+
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != 200 {
+		return nil, fmt.Errorf("[http get] status err %s, %d\n", getUrl, resp.StatusCode)
+	}
+	return ioutil.ReadAll(resp.Body)
+}
+
 func HttpPost(postUrl string, q url.Values, credential ...string) ([]byte, error) {
 	httpClientThrottle.Acquire()
 	defer httpClientThrottle.Release()
