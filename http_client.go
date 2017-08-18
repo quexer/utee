@@ -91,13 +91,13 @@ func HttpPost2(postUrl string, contentType string, body io.Reader, opt *HttpOpt)
 	return b, nil
 }
 
-func HttpGet2(getUrl string, contentType string, opt *HttpOpt) ([]byte, error) {
+func HttpGet2(getUrl string, contentType string, body io.Reader, opt *HttpOpt) ([]byte, error) {
 	httpClientThrottle.Acquire()
 	defer httpClientThrottle.Release()
 
 	var resp *http.Response
 	var err error
-	req, err := http.NewRequest("GET", getUrl, nil)
+	req, err := http.NewRequest("GET", getUrl, body)
 	if err != nil {
 		return nil, fmt.Errorf("[http] err %s, %s\n", getUrl, err)
 	}
