@@ -7,6 +7,7 @@ import (
 	"crypto/sha256"
 	"crypto/x509"
 	"encoding/hex"
+	"encoding/json"
 	"encoding/pem"
 	"errors"
 	"fmt"
@@ -348,4 +349,11 @@ func StrToInf(src []string) []interface{} {
 		result = append(result, v)
 	}
 	return result
+}
+
+func PrintJson(any ...interface{}) {
+	for _, obj := range any {
+		b, err := json.Marshal(obj)
+		fmt.Println(err, string(b))
+	}
 }
