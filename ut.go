@@ -145,6 +145,15 @@ func ContainsInt(s []int, e int) bool {
 	return false
 }
 
+func ContainsUint(s []uint, e uint) bool {
+	for _, a := range s {
+		if a == e {
+			return true
+		}
+	}
+	return false
+}
+
 func IndexOf(s []string, e string) int {
 	for i, a := range s {
 		if a == e {
