@@ -14,7 +14,6 @@ import (
 	"io"
 	"log"
 	"math/rand"
-	"net/http"
 	"net/smtp"
 	"strconv"
 	"strings"
@@ -193,47 +192,6 @@ func Md5(b []byte) []byte {
 	h := md5.New()
 	h.Write(b)
 	return h.Sum(nil)
-}
-
-// parse form into J
-func F2j(r *http.Request) J {
-	r.ParseForm()
-	j := J{}
-	for k, v := range r.Form {
-		if len(v) == 1 {
-			if len(v[0]) > 0 {
-				j[k] = v[0]
-			}
-		} else {
-			j[k] = v
-		}
-	}
-	return j
-}
-
-func Fint64(s interface{}, dft ...int64) int64 {
-	var i int64
-	var err error
-	if s == nil {
-		if len(dft) > 0 {
-			return dft[0]
-		} else {
-			s = "0"
-		}
-	}
-	i, err = strconv.ParseInt(s.(string), 10, 64)
-	if err != nil && len(dft) > 0 {
-		i = dft[0]
-	}
-	return i
-}
-
-func Fint(s interface{}, dft ...int64) int {
-	if len(dft) > 0 {
-		return int(Fint64(s, dft[0]))
-	} else {
-		return int(Fint64(s))
-	}
 }
 
 func DeleteMap(m map[string]interface{}, ks ...string) {
