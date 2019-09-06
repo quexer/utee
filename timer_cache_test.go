@@ -1,38 +1,37 @@
 package utee
 
 import (
-	"fmt"
-	"log"
-	"testing"
-	"time"
+	. "github.com/onsi/ginkgo"
+	. "github.com/onsi/gomega"
 )
 
-func TestTimeCache(t *testing.T) {
-	tc := NewTimerCache(3, func(k, v interface{}) {
-		log.Println("expire", k, v)
+var _ = Describe("TimerCache", func() {
+	var tc *TimerCache
+	BeforeEach(func() {
+		tc = NewTimerCache(1, func(k, v interface{}) {
+		})
 	})
-	if len := tc.Len(); len != 0 {
-		t.Error("len should be 0", len)
-	}
-	tc.Put(1, 1)
-	tc.Put(2, 2)
-	time.Sleep(time.Second)
-	tc.Put(1, 3)
-	if len := tc.Len(); len != 2 {
-		t.Error("len should be 2", len)
-	}
-
-	if val := tc.Get(1); val != 3 {
-		t.Error("1=> should be 3", val)
-	}
-
-	for _, k := range tc.Keys() {
-		fmt.Println("@k:", k)
-	}
-
-	time.Sleep(4 * time.Second)
-
-	if len := tc.Len(); len != 0 {
-		t.Error("len should be 0 after expire", len)
-	}
-}
+	It("auto clear after expire", func() {
+		By("brand new time cache should be empty", func() {
+			Expect(tc.Len()).Should(Equal(0))
+		})
+		By("length should be changed after put 1", func() {
+			tc.Put(1, "a")
+			Expect(tc.Len()).Should(Equal(1))
+			Expect(tc.Get(1)).Should(Equal("a"))
+		})
+		By("restore empty after expire", func() {
+			Eventually(func() int { return tc.Len() }, 2).Should(Equal(0))
+		})
+	})
+	It("keys", func() {
+		Expect(len(tc.Keys())).Should(Equal(0))
+		tc.Put(1, "a")
+		Expect(tc.Keys()).Should(Equal([]interface{}{1}))
+	})
+	It("remove", func() {
+		tc.Put(1, "a")
+		tc.Remove(1)
+		Expect(tc.Len()).Should(Equal(0))
+	})
+})

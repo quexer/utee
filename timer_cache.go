@@ -47,7 +47,7 @@ func (pq *priorityQueue) Pop() interface{} {
 }
 
 type TimerCache struct {
-	sync.RWMutex
+	lock sync.RWMutex
 
 	q   priorityQueue
 	m   map[interface{}]*pqItem
@@ -73,8 +73,8 @@ func NewTimerCache(ttl int, expireCb func(key, value interface{})) *TimerCache {
 }
 
 func (p *TimerCache) Put(key, val interface{}) bool {
-	p.Lock()
-	defer p.Unlock()
+	p.lock.Lock()
+	defer p.lock.Unlock()
 
 	ttl := time.Now().Unix() + int64(p.ttl)
 	if old := p.m[key]; old == nil {
@@ -94,8 +94,8 @@ func (p *TimerCache) Put(key, val interface{}) bool {
 }
 
 func (p *TimerCache) Get(key interface{}) interface{} {
-	p.RLock()
-	defer p.RUnlock()
+	p.lock.RLock()
+	defer p.lock.RUnlock()
 
 	if item := p.m[key]; item == nil {
 		return nil
@@ -105,8 +105,8 @@ func (p *TimerCache) Get(key interface{}) interface{} {
 }
 
 func (p *TimerCache) Remove(key interface{}) interface{} {
-	p.Lock()
-	defer p.Unlock()
+	p.lock.Lock()
+	defer p.lock.Unlock()
 
 	if item, ok := p.m[key]; ok {
 		item.dead = true //mark dead
@@ -118,14 +118,14 @@ func (p *TimerCache) Remove(key interface{}) interface{} {
 }
 
 func (p *TimerCache) Len() int {
-	p.RLock()
-	defer p.RUnlock()
+	p.lock.RLock()
+	defer p.lock.RUnlock()
 	return len(p.m)
 }
 
 func (p *TimerCache) tryPop(tick int64, expireCb func(key, value interface{})) {
-	p.Lock()
-	defer p.Unlock()
+	p.lock.Lock()
+	defer p.lock.Unlock()
 
 	for p.q.Len() > 0 {
 		item := p.q[0]
@@ -146,8 +146,8 @@ func (p *TimerCache) tryPop(tick int64, expireCb func(key, value interface{})) {
 }
 
 func (p *TimerCache) Keys() []interface{} {
-	p.RLock()
-	defer p.RUnlock()
+	p.lock.RLock()
+	defer p.lock.RUnlock()
 	keys := make([]interface{}, 0, len(p.m))
 	for k := range p.m {
 		keys = append(keys, k)
