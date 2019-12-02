@@ -81,7 +81,7 @@ func Log(err error, prefix ...string) {
 	log.Println(s, err)
 }
 
-//truncate string
+// Truncate truncate string
 func Truncate(s string, n int) string {
 	if n <= 0 {
 		return ""
@@ -115,69 +115,6 @@ func TickSec() int64 {
 
 func TickHour() int64 {
 	return time.Now().Unix() / 3600 * 3600
-}
-
-func Contains(s []string, e string) bool {
-	for _, a := range s {
-		if a == e {
-			return true
-		}
-	}
-	return false
-}
-
-func ContainsInf(s []interface{}, e interface{}) bool {
-	for _, a := range s {
-		if a == e {
-			return true
-		}
-	}
-	return false
-}
-
-func ContainsInt(s []int, e int) bool {
-	for _, a := range s {
-		if a == e {
-			return true
-		}
-	}
-	return false
-}
-
-func ContainsUint(s []uint, e uint) bool {
-	for _, a := range s {
-		if a == e {
-			return true
-		}
-	}
-	return false
-}
-
-func IndexOf(s []string, e string) int {
-	for i, a := range s {
-		if a == e {
-			return i
-		}
-	}
-	return -1
-}
-
-func IndexOfInf(s []interface{}, e interface{}) int {
-	for i, a := range s {
-		if a == e {
-			return i
-		}
-	}
-	return -1
-}
-
-func IndexOfInt(s []int, e int) int {
-	for i, a := range s {
-		if a == e {
-			return i
-		}
-	}
-	return -1
 }
 
 func Millis(fmt string, timeStr string) (int64, error) {
@@ -246,49 +183,7 @@ func ParseAddr(s string) (string, int, error) {
 	return a[0], port, err
 }
 
-func Unique(data []interface{}) []interface{} {
-	m := map[interface{}]interface{}{}
-
-	for _, d := range data {
-		m[d] = "0"
-	}
-
-	l := []interface{}{}
-	for key := range m {
-		l = append(l, key)
-	}
-	return l
-}
-
-func UniqueInt(data []int) []int {
-	m := map[int]string{}
-
-	for _, d := range data {
-		m[d] = "0"
-	}
-
-	l := []int{}
-	for key := range m {
-		l = append(l, key)
-	}
-	return l
-}
-
-func UniqueStr(data []string) []string {
-	m := map[string]string{}
-
-	for _, d := range data {
-		m[d] = "0"
-	}
-
-	l := []string{}
-	for key := range m {
-		l = append(l, key)
-	}
-	return l
-}
-
-//split a into several parts, no more than n
+// split a into several parts, no more than n
 func SplitSlice(a []string, n int) [][]string {
 	if len(a) < n || n == 1 {
 		return [][]string{a}

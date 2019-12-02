@@ -7,13 +7,15 @@ import (
 
 var ErrFull = errors.New("queue is full")
 
+// MemQueue memory queue
 type MemQueue chan interface{}
 
+// NewMemQueue create memory queue
 func NewMemQueue(cap int) MemQueue {
 	return make(chan interface{}, cap)
 }
 
-//create memory queue, auto-leak element concurrently to worker
+// NewLeakMemQueue create memory queue, auto-leak element concurrently to worker
 func NewLeakMemQueue(cap, concurrent int, worker func(interface{})) MemQueue {
 	q := NewMemQueue(cap)
 
@@ -29,12 +31,12 @@ func NewLeakMemQueue(cap, concurrent int, worker func(interface{})) MemQueue {
 	return q
 }
 
-//enqueue, block if queue is full
+// EnqBlocking enqueue, block if queue is full
 func (p MemQueue) EnqBlocking(data interface{}) {
 	p <- data
 }
 
-//enqueue, return error if queue is full
+// Enq enqueue, return error if queue is full
 func (p MemQueue) Enq(data interface{}) error {
 	select {
 	case p <- data:
@@ -44,11 +46,12 @@ func (p MemQueue) Enq(data interface{}) error {
 	return nil
 }
 
+// Deq
 func (p MemQueue) Deq() interface{} {
 	return <-p
 }
 
-//dequeue less than n in a batch
+// DeqN dequeue less than n in a batch
 func (p MemQueue) DeqN(n int) []interface{} {
 	if n <= 0 {
 		log.Println("[MemQueue] deqn err, n must > 0")
@@ -70,10 +73,12 @@ func (p MemQueue) DeqN(n int) []interface{} {
 	}
 }
 
+// Len queue length
 func (p MemQueue) Len() int {
 	return len(p)
 }
 
+// Cap queue capacity
 func (p MemQueue) Cap() int {
 	return cap(p)
 }

@@ -2,10 +2,11 @@ package utee
 
 import (
 	"fmt"
-	"github.com/sirupsen/logrus"
 	"strings"
 	"sync"
 	"time"
+
+	"github.com/sirupsen/logrus"
 )
 
 type tick struct {
@@ -13,12 +14,12 @@ type tick struct {
 	T     time.Time
 }
 
-//性能日志
+// 性能日志
 type PerfLog struct {
 	sync.Mutex
 	logger *logrus.Entry
-	max    uint32  //阈值， 以毫秒为单位，总时间超过此数值才会有日志输出
-	ticks  []*tick //记录所有时间点及label
+	max    uint32  // 阈值， 以毫秒为单位，总时间超过此数值才会有日志输出
+	ticks  []*tick // 记录所有时间点及label
 	done   bool
 }
 
@@ -39,7 +40,7 @@ func (p *PerfLog) Done() {
 	p.done = true
 	p.saveTick("done")
 
-	//有始有终， 所以至少会记录两个点
+	// 有始有终， 所以至少会记录两个点
 	start := p.ticks[0].T
 	end := p.ticks[len(p.ticks)-1].T
 
@@ -52,7 +53,7 @@ func (p *PerfLog) Done() {
 	for i, v := range p.ticks {
 		sb.WriteString(fmt.Sprint(`'`, v.Label, `'`))
 		if i == len(p.ticks)-1 {
-			//最后一轮，不输出时间差
+			// 最后一轮，不输出时间差
 			continue
 		}
 		sb.WriteString(" ")
@@ -63,7 +64,7 @@ func (p *PerfLog) Done() {
 	p.logger.WithField("perf_log_total", totalElapsed.String()).Warnln("perf_log_slow", sb.String())
 }
 
-//生成PerfLog， maxMs 输出阈值，单位为毫秒
+// 生成PerfLog， maxMs 输出阈值，单位为毫秒
 func NewPerfLog(maxMs uint32, logger *logrus.Entry) *PerfLog {
 	if maxMs == 0 {
 		panic("bad maxMs val")

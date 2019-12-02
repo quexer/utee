@@ -36,7 +36,7 @@ var _ = Describe("TimerCache", func() {
 	It("expire", func() {
 		var key int
 		var val string
-		tc = NewTimerCache(1, func(k, v interface{}){
+		tc = NewTimerCache(1, func(k, v interface{}) {
 			key = k.(int)
 			val = v.(string)
 		})
