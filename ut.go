@@ -183,6 +183,48 @@ func ParseAddr(s string) (string, int, error) {
 	return a[0], port, err
 }
 
+func Unique(data []interface{}) []interface{} {
+	m := map[interface{}]interface{}{}
+
+	for _, d := range data {
+		m[d] = "0"
+	}
+
+	l := []interface{}{}
+	for key := range m {
+		l = append(l, key)
+	}
+	return l
+}
+
+func UniqueInt(data []int) []int {
+	m := map[int]string{}
+
+	for _, d := range data {
+		m[d] = "0"
+	}
+
+	l := []int{}
+	for key := range m {
+		l = append(l, key)
+	}
+	return l
+}
+
+func UniqueStr(data []string) []string {
+	m := map[string]string{}
+
+	for _, d := range data {
+		m[d] = "0"
+	}
+
+	l := []string{}
+	for key := range m {
+		l = append(l, key)
+	}
+	return l
+}
+
 // split a into several parts, no more than n
 func SplitSlice(a []string, n int) [][]string {
 	if len(a) < n || n == 1 {
