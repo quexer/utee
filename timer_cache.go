@@ -10,9 +10,9 @@ import (
 type pqItem struct {
 	key   interface{}
 	value interface{}
-	ttl   int64 //unix timestamp , in second
+	ttl   int64 // unix timestamp , in second
 	index int
-	dead  bool //mark as dead,
+	dead  bool // mark as dead,
 }
 
 // A priorityQueue implements heap.Interface and holds Items.
@@ -54,8 +54,8 @@ type TimerCache struct {
 	ttl int
 }
 
-//ttl in second
-//expireCb,  expire callback
+// ttl in second
+// expireCb,  expire callback
 func NewTimerCache(ttl int, expireCb func(key, value interface{})) *TimerCache {
 	tc := &TimerCache{
 		q:   []*pqItem{},
@@ -109,7 +109,7 @@ func (p *TimerCache) Remove(key interface{}) interface{} {
 	defer p.lock.Unlock()
 
 	if item, ok := p.m[key]; ok {
-		item.dead = true //mark dead
+		item.dead = true // mark dead
 		delete(p.m, key)
 		return item.value
 	} else {
@@ -130,7 +130,7 @@ func (p *TimerCache) tryPop(tick int64, expireCb func(key, value interface{})) {
 	for p.q.Len() > 0 {
 		item := p.q[0]
 		if item.ttl > tick {
-			//no expire items
+			// no expire items
 			//			log.Println("no expire items", item.ttl, tick)
 			return
 		}
@@ -138,7 +138,7 @@ func (p *TimerCache) tryPop(tick int64, expireCb func(key, value interface{})) {
 		item = heap.Pop(&p.q).(*pqItem)
 		delete(p.m, item.key)
 
-		//ignore dead item
+		// ignore dead item
 		if !item.dead && expireCb != nil {
 			go expireCb(item.key, item.value)
 		}
