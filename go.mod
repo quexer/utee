@@ -1,8 +1,8 @@
 module github.com/quexer/utee
 
 require (
-	github.com/onsi/ginkgo v1.10.3
-	github.com/onsi/gomega v1.7.1
+	github.com/onsi/ginkgo v1.12.0
+	github.com/onsi/gomega v1.9.0
 	github.com/sirupsen/logrus v1.4.2
 )
 

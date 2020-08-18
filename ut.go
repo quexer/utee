@@ -12,7 +12,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"log"
 	"math/rand"
 	"net/smtp"
 	"strconv"
@@ -69,18 +68,6 @@ func Chk(err error) {
 	}
 }
 
-func Log(err error, prefix ...string) {
-	if err == nil {
-		return
-	}
-
-	s := ""
-	if len(prefix) > 0 {
-		s = prefix[0]
-	}
-	log.Println(s, err)
-}
-
 // Truncate truncate string
 func Truncate(s string, n int) string {
 	if n <= 0 {
@@ -101,28 +88,18 @@ func Truncate(s string, n int) string {
 	return string(l)
 }
 
+// Tick unix timestamp in millisecond
 func Tick(t ...time.Time) int64 {
 	if len(t) == 0 {
 		return time.Now().UnixNano() / 1e6
-	} else {
-		return t[0].UnixNano() / 1e6
 	}
+
+	return t[0].UnixNano() / 1e6
 }
 
-func TickSec() int64 {
-	return time.Now().Unix()
-}
-
-func TickHour() int64 {
-	return time.Now().Unix() / 3600 * 3600
-}
-
-func Millis(fmt string, timeStr string) (int64, error) {
-	data, err := time.Parse(fmt, timeStr)
-	if err != nil {
-		return 0, err
-	}
-	return data.UnixNano() / 1e6, nil
+// TickToTime convert unix timestamp in millisecond to time at current location
+func TickToTime(tick int64) time.Time {
+	return time.Unix(tick/1e3, (tick%1e3)*1e6)
 }
 
 func Md5(b []byte) []byte {

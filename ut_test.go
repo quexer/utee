@@ -1,77 +1,66 @@
-package utee
+package utee_test
 
 import (
-	"strings"
-	"testing"
+	"time"
+
+	. "github.com/onsi/ginkgo"
+	. "github.com/onsi/ginkgo/extensions/table"
+	. "github.com/onsi/gomega"
+
+	"github.com/quexer/utee"
 )
 
-func TestTruncate(t *testing.T) {
-	if s := Truncate("中文test", 10); s != "中文test" {
-		t.Error("no truncate", s)
-	}
-}
+var _ = Describe("Ut", func() {
+	It("TickToTime", func() {
+		now := time.Now()
+		t := utee.TickToTime(utee.Tick(now))
+		Expect(t).To(BeTemporally("~", now, time.Millisecond))
+	})
 
-func TestSplitSlice(t *testing.T) {
-	a := SplitSlice(nil, 5)
-	if len(a) != 1 {
-		t.Error("at least 1 element")
-	}
-	if a[0] != nil {
-		t.Error("shoud be nil")
-	}
+	It("Truncate: no truncate", func() {
+		Expect(utee.Truncate("中文test", 10)).To(Equal("中文test"))
+	})
 
-	a = SplitSlice([]string{"a"}, 4)
-	if len(a) != 1 {
-		t.Error("should be 1 element")
-	}
-	if len(a[0]) != 1 {
-		t.Error("shoud be 1 elements")
-	}
+	Context("SplitSlice", func() {
+		It("nil ", func() {
+			a := utee.SplitSlice(nil, 5)
+			Expect(a).To(HaveLen(1))
+			Expect(a[0]).To(BeNil())
+		})
+		It("one element", func() {
+			a := utee.SplitSlice([]string{"a"}, 4)
+			Expect(a).To(HaveLen(1))
+			Expect(a[0][0]).To(Equal("a"))
+		})
+		DescribeTable("two element",
+			func(maxSplit int) {
+				a := utee.SplitSlice([]string{"a", "b"}, maxSplit)
+				Expect(a).To(HaveLen(1))
+				Expect(a[0]).To(HaveLen(2))
+			},
+			Entry("5", 5),
+			Entry("1", 1),
+		)
+		It("4 => 3", func() {
+			a := utee.SplitSlice([]string{"a", "b", "c", "d"}, 3)
+			Expect(a).To(HaveLen(3))
+			Expect(a[0]).To(HaveLen(2))
+			Expect(a[1]).To(HaveLen(1))
+			Expect(a[2]).To(HaveLen(1))
+		})
 
-	a = SplitSlice([]string{"a", "b"}, 5)
-	if len(a) != 1 {
-		t.Error("should be 1 element")
-	}
-	if len(a[0]) != 2 {
-		t.Error("shoud be 2 elements")
-	}
+		It("6 => 3", func() {
+			a := utee.SplitSlice([]string{"a", "b", "c", "d", "e", "f"}, 3)
+			Expect(a).To(HaveLen(3))
+			Expect(a[2][1]).To(Equal("f"))
+		})
 
-	a = SplitSlice([]string{"a", "b"}, 1)
-	if len(a) != 1 {
-		t.Error("should be 1 element")
-	}
-	if len(a[0]) != 2 {
-		t.Error("shoud be 2 elements")
-	}
+		It("3 => 2", func() {
+			a := utee.SplitSlice([]string{"a", "b", "c"}, 2)
+			Expect(a).To(HaveLen(2))
+			Expect(a[0]).To(Equal([]string{"a", "c"}))
+			Expect(a[1]).To(Equal([]string{"b"}))
+		})
 
-	a = SplitSlice([]string{"a", "b", "c", "d"}, 3)
-	if len(a) != 3 {
-		t.Error("should be 3 element")
-	}
-	if len(a[0]) != 2 {
-		t.Error("shoud be 2 elements")
-	}
-	if len(a[1]) != 1 || len(a[2]) != 1 {
-		t.Error("shoud be 1 elements")
-	}
-
-	a = SplitSlice([]string{"a", "b", "c", "d", "e", "f"}, 3)
-	if len(a) != 3 {
-		t.Error("should be 3 element")
-	}
-	if a[2][1] != "f" {
-		t.Error("shoud be f")
-	}
-
-	a = SplitSlice([]string{"a", "b", "c"}, 2)
-	if len(a) != 2 {
-		t.Error("should be 2 element")
-	}
-
-	if strings.Join(a[0], "") != "ac" {
-		t.Error("shoud be ac")
-	}
-	if strings.Join(a[1], "") != "b" {
-		t.Errorf("expect be b, got %v", a[1])
-	}
-}
+	})
+})
