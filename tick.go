@@ -19,13 +19,3 @@ func NewTick(t ...time.Time) Tick {
 
 	return Tick(t[0].UnixNano() / 1e6)
 }
-
-// CompareTo implement linq.Compare interface to work with it
-func (p Tick) CompareTo(b Tick) int {
-	if p < b {
-		return -1
-	} else if p > b {
-		return 1
-	}
-	return 0
-}
