@@ -7,7 +7,6 @@ import (
 	"crypto/sha256"
 	"crypto/x509"
 	"encoding/hex"
-	"encoding/json"
 	"encoding/pem"
 	"errors"
 	"fmt"
@@ -21,7 +20,9 @@ import (
 )
 
 var (
-	PlainMd5  = Md5Str("")
+	// PlainMd5 string md5 function with empty salt
+	PlainMd5 = Md5Str("")
+	// PlainMd5 string sha-1 function with empty salt
 	PlainSha1 = Sha1Str("")
 )
 
@@ -29,6 +30,7 @@ func init() {
 	rand.Seed(time.Now().UTC().UnixNano())
 }
 
+// Md5Str create string md5 function with salt
 func Md5Str(salt string) func(string) string {
 	return func(s string) string {
 		h := md5.New()
@@ -38,6 +40,7 @@ func Md5Str(salt string) func(string) string {
 	}
 }
 
+// Sha1Str create string sha-1 function with salt
 func Sha1Str(salt string) func(string) string {
 	return func(s string) string {
 		h := sha1.New()
@@ -47,6 +50,7 @@ func Sha1Str(salt string) func(string) string {
 	}
 }
 
+// Sha256Str create string sha-256 function with salt
 func Sha256Str(salt string) func(string) string {
 	return func(s string) string {
 		h := sha256.New()
@@ -89,17 +93,21 @@ func Truncate(s string, n int) string {
 }
 
 // Tick unix timestamp in millisecond
-func Tick(t ...time.Time) int64 {
-	if len(t) == 0 {
-		return time.Now().UnixNano() / 1e6
-	}
+type Tick int64
 
-	return t[0].UnixNano() / 1e6
+// TickToTime convert tick to local time
+func (p Tick) ToTime() time.Time {
+	tick := int64(p)
+	return time.Unix(tick/1e3, (tick%1e3)*1e6)
 }
 
-// TickToTime convert unix timestamp in millisecond to time at current location
-func TickToTime(tick int64) time.Time {
-	return time.Unix(tick/1e3, (tick%1e3)*1e6)
+// NewTick create Tick. default value if now at local time
+func NewTick(t ...time.Time) Tick {
+	if len(t) == 0 {
+		return Tick(time.Now().UnixNano() / 1e6)
+	}
+
+	return Tick(t[0].UnixNano() / 1e6)
 }
 
 func Md5(b []byte) []byte {
@@ -108,7 +116,7 @@ func Md5(b []byte) []byte {
 	return h.Sum(nil)
 }
 
-func DeleteMap(m map[string]interface{}, ks ...string) {
+func MultiDeleteFromMap(m map[string]interface{}, ks ...string) {
 	for _, v := range ks {
 		delete(m, v)
 	}
@@ -230,11 +238,4 @@ func StrToInf(src []string) []interface{} {
 		result = append(result, v)
 	}
 	return result
-}
-
-func PrintJson(any ...interface{}) {
-	for _, obj := range any {
-		b, err := json.Marshal(obj)
-		fmt.Println(err, string(b))
-	}
 }

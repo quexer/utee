@@ -13,7 +13,7 @@ import (
 var _ = Describe("Ut", func() {
 	It("TickToTime", func() {
 		now := time.Now()
-		t := utee.TickToTime(utee.Tick(now))
+		t := utee.NewTick(now).ToTime()
 		Expect(t).To(BeTemporally("~", now, time.Millisecond))
 	})
 
