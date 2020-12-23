@@ -44,4 +44,10 @@ var _ = Describe("TimerCache", func() {
 		Eventually(func() int { return key }, 2).Should(Equal(1))
 		Eventually(func() string { return val }, 2).Should(Equal("a"))
 	})
+	It("ttl", func() {
+		tc = NewTimerCache(2, nil)
+		tc.Put(1, "a")
+		Ω(tc.TTL(1)).Should(BeEquivalentTo(2))
+		Eventually(func() int64 { return tc.TTL(1) }, 3).Should(BeEquivalentTo(0))
+	})
 })

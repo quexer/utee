@@ -104,6 +104,20 @@ func (p *TimerCache) Get(key interface{}) interface{} {
 	}
 }
 
+// TTL Check ttl (in second)
+func (p *TimerCache) TTL(key interface{}) int64 {
+	p.lock.RLock()
+	defer p.lock.RUnlock()
+
+	if item := p.m[key]; item == nil {
+		return 0
+	} else if item.dead {
+		return 0
+	} else {
+		return item.ttl - time.Now().Unix()
+	}
+}
+
 func (p *TimerCache) Remove(key interface{}) interface{} {
 	p.lock.Lock()
 	defer p.lock.Unlock()
