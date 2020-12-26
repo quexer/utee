@@ -1,7 +1,6 @@
 package utee
 
 import (
-	"crypto/tls"
 	"errors"
 	"fmt"
 	"io"
@@ -21,9 +20,8 @@ const (
 
 var (
 	httpClientThrottle = NewThrottle(MAX_HTTP_CLIENT_CONCURRENT)
-	insecureClient     = &http.Client{
-		Timeout:   15 * time.Second,
-		Transport: &http.Transport{TLSClientConfig: &tls.Config{InsecureSkipVerify: true}},
+	client             = &http.Client{
+		Timeout: 15 * time.Second,
 	}
 	ErrEmptyHeaderName = errors.New("header name must not be empty")
 )
@@ -36,6 +34,11 @@ type BasicAuth struct {
 type HttpOpt struct {
 	Headers   map[string]string
 	BasicAuth *BasicAuth
+}
+
+// HTTP Client expose for further customize
+func SetHttpClient(hc *http.Client) {
+	client = hc
 }
 
 func HttpPost2(postUrl string, contentType string, body io.Reader, opt *HttpOpt) ([]byte, error) {
@@ -72,7 +75,7 @@ func HttpPost2(postUrl string, contentType string, body io.Reader, opt *HttpOpt)
 		}
 	}
 
-	resp, err = insecureClient.Do(req)
+	resp, err = client.Do(req)
 	if err != nil {
 		return nil, fmt.Errorf("[http] err %s, %s", postUrl, err)
 	}
@@ -124,7 +127,7 @@ func HttpGet2(getUrl string, contentType string, opt *HttpOpt) ([]byte, error) {
 		}
 	}
 
-	resp, err = insecureClient.Do(req)
+	resp, err = client.Do(req)
 
 	if err != nil {
 		return nil, err
@@ -152,7 +155,7 @@ func HttpPost(postUrl string, q url.Values, credential ...string) ([]byte, error
 		req.SetBasicAuth(credential[0], credential[1])
 	}
 
-	resp, err = insecureClient.Do(req)
+	resp, err = client.Do(req)
 
 	if err != nil {
 		return nil, fmt.Errorf("[http] err %s, %s", postUrl, err)
@@ -182,7 +185,7 @@ func HttpGet(getUrl string, credential ...string) ([]byte, error) {
 		req.SetBasicAuth(credential[0], credential[1])
 	}
 
-	resp, err = insecureClient.Do(req)
+	resp, err = client.Do(req)
 
 	if err != nil {
 		return nil, err
