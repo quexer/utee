@@ -16,11 +16,11 @@ var _ = Describe("Web", func() {
 			j = utee.J{"name": "a", "id": 5}
 		})
 		It("ToString", func() {
-			Ω(j.ToString()).Should(MatchJSON(`{"id":5, "name":"a"}`))
+			Ω(j.ToString()).To(MatchJSON(`{"id":5, "name":"a"}`))
 		})
 		It("ToReader", func() {
 			b, _ := ioutil.ReadAll(j.ToReader())
-			Ω(string(b)).Should(MatchJSON(`{"id":5, "name":"a"}`))
+			Ω(string(b)).To(MatchJSON(`{"id":5, "name":"a"}`))
 		})
 	})
 })
