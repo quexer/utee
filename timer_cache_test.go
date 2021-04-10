@@ -12,26 +12,26 @@ var _ = Describe("TimerCache", func() {
 	})
 	It("auto clear after expire", func() {
 		By("brand new time cache should be empty", func() {
-			Expect(tc.Len()).Should(Equal(0))
+			Ω(tc.Len()).To(Equal(0))
 		})
 		By("length should be changed after put 1", func() {
 			tc.Put(1, "a")
-			Expect(tc.Len()).Should(Equal(1))
-			Expect(tc.Get(1)).Should(Equal("a"))
+			Ω(tc.Len()).To(Equal(1))
+			Ω(tc.Get(1)).To(Equal("a"))
 		})
 		By("restore empty after expire", func() {
 			Eventually(func() int { return tc.Len() }, 2).Should(Equal(0))
 		})
 	})
 	It("keys", func() {
-		Expect(len(tc.Keys())).Should(Equal(0))
+		Ω(len(tc.Keys())).To(Equal(0))
 		tc.Put(1, "a")
-		Expect(tc.Keys()).Should(Equal([]interface{}{1}))
+		Ω(tc.Keys()).To(Equal([]interface{}{1}))
 	})
 	It("remove", func() {
 		tc.Put(1, "a")
 		tc.Remove(1)
-		Expect(tc.Len()).Should(Equal(0))
+		Ω(tc.Len()).To(Equal(0))
 	})
 	It("expire", func() {
 		var key int
@@ -47,7 +47,7 @@ var _ = Describe("TimerCache", func() {
 	It("ttl", func() {
 		tc = NewTimerCache(2, nil)
 		tc.Put(1, "a")
-		Ω(tc.TTL(1)).Should(BeEquivalentTo(2))
+		Ω(tc.TTL(1)).To(BeEquivalentTo(2))
 		Eventually(func() int64 { return tc.TTL(1) }, 3).Should(BeEquivalentTo(0))
 	})
 })

@@ -192,20 +192,6 @@ func UniqueStr(data []string) []string {
 	return l
 }
 
-// split a into several parts, no more than n
-func SplitSlice(a []string, n int) [][]string {
-	if len(a) < n || n == 1 {
-		return [][]string{a}
-	}
-
-	result := make([][]string, n)
-	for i, s := range a {
-		idx := i % n
-		result[idx] = append(result[idx], s)
-	}
-	return result
-}
-
 func IntToInf(src []int) []interface{} {
 	result := []interface{}{}
 	for _, v := range src {
