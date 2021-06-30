@@ -2,6 +2,7 @@ package utee_test
 
 import (
 	. "github.com/onsi/ginkgo"
+	. "github.com/onsi/ginkgo/extensions/table"
 	. "github.com/onsi/gomega"
 
 	"github.com/quexer/utee"
@@ -22,4 +23,20 @@ var _ = Describe("Int", func() {
 			}))
 		})
 	})
+	DescribeTable("Min",
+		func(src []int, min int) {
+			n := utee.Min(src...)
+			Ω(n).To(Equal(min))
+		},
+		Entry("a", []int{7, 5, 1}, 1),
+		Entry("b", []int{1, 3, 7, 5}, 1),
+	)
+	DescribeTable("Max",
+		func(src []int, max int) {
+			n := utee.Max(src...)
+			Ω(n).To(Equal(max))
+		},
+		Entry("a", []int{7, 5, 1}, 7),
+		Entry("b", []int{1, 3, 7, 5}, 7),
+	)
 })
