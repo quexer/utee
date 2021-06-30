@@ -15,3 +15,25 @@ func SplitIntSlice(src []int, chunkSize int) [][]int {
 	}
 	return out
 }
+
+// Min returns the smallest parameter
+func Min(n ...int) int {
+	var out = n[0]
+	for _, v := range n {
+		if v < out {
+			out = v
+		}
+	}
+	return out
+}
+
+// Max returns the biggest parameter
+func Max(n ...int) int {
+	var out = n[0]
+	for _, v := range n {
+		if v > out {
+			out = v
+		}
+	}
+	return out
+}
