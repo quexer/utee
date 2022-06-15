@@ -1,5 +1,9 @@
 package utee
 
+import (
+	"github.com/samber/lo"
+)
+
 // SplitStringSlice split string slice into chunks
 func SplitStringSlice(src []string, chunkSize int) [][]string {
 	var out [][]string
@@ -28,4 +32,10 @@ func SplitStringSliceIntoN(a []string, n int) [][]string {
 		result[idx] = append(result[idx], s)
 	}
 	return result
+}
+
+// Truncate , truncate string as []rune
+// make sure the rune count of result is not more than maxLen
+func Truncate(s string, maxLen uint) string {
+	return string(lo.Subset([]rune(s), 0, maxLen))
 }
