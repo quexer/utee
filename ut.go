@@ -21,7 +21,7 @@ import (
 var (
 	// PlainMd5 string md5 function with empty salt
 	PlainMd5 = Md5Str("")
-	// PlainMd5 string sha-1 function with empty salt
+	// PlainSha1 string sha-1 function with empty salt
 	PlainSha1 = Sha1Str("")
 )
 
@@ -77,7 +77,7 @@ func Md5(b []byte) []byte {
 	return h.Sum(nil)
 }
 
-func MultiDeleteFromMap(m map[string]interface{}, ks ...string) {
+func MultiDeleteFromMap[K comparable, V any](m map[K]V, ks ...K) {
 	for _, v := range ks {
 		delete(m, v)
 	}
@@ -93,15 +93,6 @@ func IsPemExpire(b []byte) (bool, error) {
 		return false, err
 	}
 	return cert.NotAfter.Before(time.Now()), nil
-}
-
-func Shuffle(src []string) []string {
-	dest := make([]string, len(src))
-	perm := rand.Perm(len(src))
-	for i, v := range perm {
-		dest[v] = src[i]
-	}
-	return dest
 }
 
 func SendMail(user, password, host, to, subject, body, mailtype string) error {
