@@ -15,9 +15,4 @@ var _ = Describe("Ut", func() {
 		t := utee.NewTick(now).ToTime()
 		Ω(t).To(BeTemporally("~", now, time.Millisecond))
 	})
-
-	It("Truncate: no truncate", func() {
-		Ω(utee.Truncate("中文test", 10)).To(Equal("中文test"))
-	})
-
 })

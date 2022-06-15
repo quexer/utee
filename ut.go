@@ -16,7 +16,6 @@ import (
 	"strconv"
 	"strings"
 	"time"
-	"unicode/utf8"
 )
 
 var (
@@ -70,26 +69,6 @@ func Chk(err error) {
 	if err != nil {
 		panic(err)
 	}
-}
-
-// Truncate truncate string
-func Truncate(s string, n int) string {
-	if n <= 0 {
-		return ""
-	}
-
-	length := utf8.RuneCountInString(s)
-	if length <= n {
-		return s
-	}
-
-	l := []rune{}
-	for _, r := range s {
-		l = append(l, r)
-	}
-
-	l = l[:(length - n)]
-	return string(l)
 }
 
 func Md5(b []byte) []byte {
