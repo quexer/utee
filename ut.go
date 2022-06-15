@@ -16,13 +16,12 @@ import (
 	"strconv"
 	"strings"
 	"time"
-	"unicode/utf8"
 )
 
 var (
 	// PlainMd5 string md5 function with empty salt
 	PlainMd5 = Md5Str("")
-	// PlainMd5 string sha-1 function with empty salt
+	// PlainSha1 string sha-1 function with empty salt
 	PlainSha1 = Sha1Str("")
 )
 
@@ -72,33 +71,13 @@ func Chk(err error) {
 	}
 }
 
-// Truncate truncate string
-func Truncate(s string, n int) string {
-	if n <= 0 {
-		return ""
-	}
-
-	length := utf8.RuneCountInString(s)
-	if length <= n {
-		return s
-	}
-
-	l := []rune{}
-	for _, r := range s {
-		l = append(l, r)
-	}
-
-	l = l[:(length - n)]
-	return string(l)
-}
-
 func Md5(b []byte) []byte {
 	h := md5.New()
 	h.Write(b)
 	return h.Sum(nil)
 }
 
-func MultiDeleteFromMap(m map[string]interface{}, ks ...string) {
+func MultiDeleteFromMap[K comparable, V any](m map[K]V, ks ...K) {
 	for _, v := range ks {
 		delete(m, v)
 	}
@@ -114,15 +93,6 @@ func IsPemExpire(b []byte) (bool, error) {
 		return false, err
 	}
 	return cert.NotAfter.Before(time.Now()), nil
-}
-
-func Shuffle(src []string) []string {
-	dest := make([]string, len(src))
-	perm := rand.Perm(len(src))
-	for i, v := range perm {
-		dest[v] = src[i]
-	}
-	return dest
 }
 
 func SendMail(user, password, host, to, subject, body, mailtype string) error {
@@ -148,62 +118,4 @@ func ParseAddr(s string) (string, int, error) {
 	}
 	port, err := strconv.Atoi(a[1])
 	return a[0], port, err
-}
-
-func Unique(data []interface{}) []interface{} {
-	m := map[interface{}]interface{}{}
-
-	for _, d := range data {
-		m[d] = "0"
-	}
-
-	l := []interface{}{}
-	for key := range m {
-		l = append(l, key)
-	}
-	return l
-}
-
-func UniqueInt(data []int) []int {
-	m := map[int]string{}
-
-	for _, d := range data {
-		m[d] = "0"
-	}
-
-	l := []int{}
-	for key := range m {
-		l = append(l, key)
-	}
-	return l
-}
-
-func UniqueStr(data []string) []string {
-	m := map[string]string{}
-
-	for _, d := range data {
-		m[d] = "0"
-	}
-
-	l := []string{}
-	for key := range m {
-		l = append(l, key)
-	}
-	return l
-}
-
-func IntToInf(src []int) []interface{} {
-	result := []interface{}{}
-	for _, v := range src {
-		result = append(result, v)
-	}
-	return result
-}
-
-func StrToInf(src []string) []interface{} {
-	result := []interface{}{}
-	for _, v := range src {
-		result = append(result, v)
-	}
-	return result
 }
