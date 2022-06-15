@@ -128,19 +128,3 @@ func ParseAddr(s string) (string, int, error) {
 	port, err := strconv.Atoi(a[1])
 	return a[0], port, err
 }
-
-func IntToInf(src []int) []interface{} {
-	result := []interface{}{}
-	for _, v := range src {
-		result = append(result, v)
-	}
-	return result
-}
-
-func StrToInf(src []string) []interface{} {
-	result := []interface{}{}
-	for _, v := range src {
-		result = append(result, v)
-	}
-	return result
-}
