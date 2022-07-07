@@ -54,8 +54,9 @@ type TimerCache struct {
 	ttl int
 }
 
-// ttl in second
+// NewTimerCache ttl in second
 // expireCb,  expire callback
+// Deprecated, use NewTimerCache2 instead
 func NewTimerCache(ttl int, expireCb func(key, value interface{})) *TimerCache {
 	tc := &TimerCache{
 		q:   []*pqItem{},

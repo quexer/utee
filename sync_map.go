@@ -2,6 +2,8 @@ package utee
 
 import "sync"
 
+// SyncMap , thread safe map
+// Deprecated , use SyncMap2 instead
 type SyncMap struct {
 	sync.RWMutex
 	m map[interface{}]interface{}
