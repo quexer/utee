@@ -1,45 +1,34 @@
 package utee
 
 import (
-	"testing"
 	"time"
+
+	. "github.com/onsi/ginkgo/v2"
+	. "github.com/onsi/gomega"
 )
 
-func TestLatch(t *testing.T) {
-	latch := NewThrottle(100)
+var _ = Describe("Throttle", func() {
+	It("Number", func() {
+		latch := NewThrottle(100)
 
-	latch.Acquire()
-	latch.Acquire()
+		latch.Acquire()
+		latch.Acquire()
 
-	if n := latch.Current(); n != 2 {
-		t.Error("current should be 2", n)
-	}
-
-	if n := latch.Available(); n != 98 {
-		t.Error("available should be 98", n)
-	}
-
-	latch.Release()
-
-	if n := latch.Current(); n != 1 {
-		t.Error("current should be 1", n)
-	}
-
-	if n := latch.Available(); n != 99 {
-		t.Error("available should be 99", n)
-	}
-
-	latch = NewThrottle(3)
-
-	go func() {
-		time.Sleep(2 * time.Second)
+		Ω(latch.Current()).To(Equal(2))
+		Ω(latch.Available()).To(Equal(98))
 		latch.Release()
-		latch.Release()
-	}()
-
-	latch.Acquire()
-	latch.Acquire()
-	latch.Acquire()
-	latch.Acquire()
-	latch.Acquire()
-}
+		Ω(latch.Current()).To(Equal(1))
+		Ω(latch.Available()).To(Equal(99))
+	})
+	It("Wait", func() {
+		latch := NewThrottle(3)
+		go func() {
+			time.Sleep(2 * time.Second)
+			latch.Release()
+			latch.Release()
+		}()
+		latch.Acquire()
+		latch.Acquire()
+		latch.Wait()
+	})
+})
