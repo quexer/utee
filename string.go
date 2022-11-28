@@ -5,7 +5,7 @@ import (
 )
 
 // SplitStringSlice split string slice into chunks
-// Deprecated use lo.ChunkString instead
+// Deprecated use lo.Chunk instead
 func SplitStringSlice(src []string, chunkSize int) [][]string {
 	var out [][]string
 	for {
