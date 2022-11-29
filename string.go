@@ -7,18 +7,7 @@ import (
 // SplitStringSlice split string slice into chunks
 // Deprecated use lo.Chunk instead
 func SplitStringSlice(src []string, chunkSize int) [][]string {
-	var out [][]string
-	for {
-		if len(src) == 0 {
-			break
-		}
-		if len(src) < chunkSize {
-			chunkSize = len(src)
-		}
-		out = append(out, src[0:chunkSize])
-		src = src[chunkSize:]
-	}
-	return out
+	return lo.Chunk(src, chunkSize)
 }
 
 // SplitStringSliceIntoN split a into several parts, no more than n

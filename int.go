@@ -1,39 +1,21 @@
 package utee
 
+import (
+	"github.com/samber/lo"
+)
+
 // SplitIntSlice split int slice into chunks
+// Deprecated use lo.Chunk instead
 func SplitIntSlice(src []int, chunkSize int) [][]int {
-	var out [][]int
-	for {
-		if len(src) == 0 {
-			break
-		}
-		if len(src) < chunkSize {
-			chunkSize = len(src)
-		}
-		out = append(out, src[0:chunkSize])
-		src = src[chunkSize:]
-	}
-	return out
+	return lo.Chunk(src, chunkSize)
 }
 
 // Min returns the smallest parameter
 func Min(n ...int) int {
-	var out = n[0]
-	for _, v := range n {
-		if v < out {
-			out = v
-		}
-	}
-	return out
+	return lo.Min(n)
 }
 
 // Max returns the biggest parameter
 func Max(n ...int) int {
-	var out = n[0]
-	for _, v := range n {
-		if v > out {
-			out = v
-		}
-	}
-	return out
+	return lo.Max(n)
 }
