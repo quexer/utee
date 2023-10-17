@@ -36,7 +36,7 @@ type HttpOpt struct {
 	BasicAuth *BasicAuth
 }
 
-// HTTP Client expose for further customize
+// SetHttpClient  expose HTTP Client for further customize
 func SetHttpClient(hc *http.Client) {
 	client = hc
 }
@@ -140,6 +140,7 @@ func HttpGet2(getUrl string, contentType string, opt *HttpOpt) ([]byte, error) {
 	return ioutil.ReadAll(resp.Body)
 }
 
+// HttpPost Deprecated use HttpPost2 instead
 func HttpPost(postUrl string, q url.Values, credential ...string) ([]byte, error) {
 	httpClientThrottle.Acquire()
 	defer httpClientThrottle.Release()
@@ -171,6 +172,7 @@ func HttpPost(postUrl string, q url.Values, credential ...string) ([]byte, error
 	return b, nil
 }
 
+// HttpGet Deprecated use HttpGet2 instead
 func HttpGet(getUrl string, credential ...string) ([]byte, error) {
 	httpClientThrottle.Acquire()
 	defer httpClientThrottle.Release()

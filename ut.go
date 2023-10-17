@@ -11,8 +11,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"math/rand"
-	"net/smtp"
 	"strconv"
 	"strings"
 	"time"
@@ -24,10 +22,6 @@ var (
 	// PlainSha1 string sha-1 function with empty salt
 	PlainSha1 = Sha1Str("")
 )
-
-func init() {
-	rand.Seed(time.Now().UTC().UnixNano())
-}
 
 // Md5Str create string md5 function with salt
 func Md5Str(salt string) func(string) string {
@@ -77,12 +71,6 @@ func Md5(b []byte) []byte {
 	return h.Sum(nil)
 }
 
-func MultiDeleteFromMap[K comparable, V any](m map[K]V, ks ...K) {
-	for _, v := range ks {
-		delete(m, v)
-	}
-}
-
 func IsPemExpire(b []byte) (bool, error) {
 	block, _ := pem.Decode(b)
 	if block == nil {
@@ -93,22 +81,6 @@ func IsPemExpire(b []byte) (bool, error) {
 		return false, err
 	}
 	return cert.NotAfter.Before(time.Now()), nil
-}
-
-func SendMail(user, password, host, to, subject, body, mailtype string) error {
-	hp := strings.Split(host, ":")
-	auth := smtp.PlainAuth("", user, password, hp[0])
-	var content_type string
-	if mailtype == "html" {
-		content_type = "Content-Type: text/" + mailtype + "; charset=UTF-8"
-	} else {
-		content_type = "Content-Type: text/plain" + "; charset=UTF-8"
-	}
-
-	msg := []byte("To: " + to + "\r\nFrom: " + user + "<" + user + ">\r\nSubject: " + subject + "\r\n" + content_type + "\r\n\r\n" + body)
-	send_to := strings.Split(to, ";")
-	err := smtp.SendMail(host, auth, user, send_to, msg)
-	return err
 }
 
 func ParseAddr(s string) (string, int, error) {
