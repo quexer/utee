@@ -14,7 +14,7 @@ type tick struct {
 	T     time.Time
 }
 
-// 性能日志
+// PerfLog performance log
 type PerfLog struct {
 	sync.Mutex
 	logger *logrus.Entry
@@ -37,6 +37,7 @@ func (p *PerfLog) Done() {
 		p.logger.Errorln("perf_log_already_done")
 		return
 	}
+
 	p.done = true
 	p.saveTick("done")
 
@@ -52,10 +53,12 @@ func (p *PerfLog) Done() {
 	sb := strings.Builder{}
 	for i, v := range p.ticks {
 		sb.WriteString(fmt.Sprint(`'`, v.Label, `'`))
+
 		if i == len(p.ticks)-1 {
 			// 最后一轮，不输出时间差
 			continue
 		}
+
 		sb.WriteString(" ")
 		sb.WriteString(fmt.Sprint(int(p.ticks[i+1].T.Sub(v.T) / time.Millisecond)))
 		sb.WriteString("ms ")
@@ -64,7 +67,7 @@ func (p *PerfLog) Done() {
 	p.logger.WithField("perf_log_total", totalElapsed.String()).Warnln("perf_log_slow", sb.String())
 }
 
-// 生成PerfLog， maxMs 输出阈值，单位为毫秒
+// NewPerfLog 生成PerfLog， maxMs 输出阈值，单位为毫秒
 func NewPerfLog(maxMs uint32, logger *logrus.Entry) *PerfLog {
 	if maxMs == 0 {
 		panic("bad maxMs val")
@@ -76,6 +79,7 @@ func NewPerfLog(maxMs uint32, logger *logrus.Entry) *PerfLog {
 	}
 
 	pl.Tick("start")
+
 	return pl
 }
 

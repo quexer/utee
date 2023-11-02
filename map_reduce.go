@@ -38,5 +38,6 @@ func FinishWithGen(concurrent int, gen func(source chan<- func() error)) error {
 			cancel(err)
 		}
 	}
+
 	return mapreduce.MapReduceVoid(gen, mapper, dummyReducer, mapreduce.WithWorkers(concurrent))
 }

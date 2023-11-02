@@ -40,6 +40,7 @@ func FlatMap[T any, R any](collection []T, fn func(T) []R) []R {
 func Shuffle[T any](collection []T) []T {
 	dest := append(collection[:0:0], collection...)
 	lo.Shuffle(dest)
+
 	return dest
 }
 
@@ -50,6 +51,7 @@ func OrderBy[T any, R constraints.Ordered](l []T, fn func(T) R) []T {
 	sort.Slice(out, func(i, j int) bool {
 		return fn(out[i]) < fn(out[j])
 	})
+
 	return out
 }
 
@@ -59,6 +61,7 @@ func OrderByDescending[T any, R constraints.Ordered](l []T, fn func(T) R) []T {
 	sort.Slice(out, func(i, j int) bool {
 		return fn(out[j]) < fn(out[i])
 	})
+
 	return out
 }
 
@@ -68,5 +71,6 @@ func Sum[T constraints.Ordered](l []T) T {
 	for _, v := range l {
 		out += v
 	}
+
 	return out
 }

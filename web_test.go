@@ -1,7 +1,7 @@
 package utee_test
 
 import (
-	"io/ioutil"
+	"io"
 
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
@@ -19,7 +19,7 @@ var _ = Describe("Web", func() {
 			Ω(j.ToString()).To(MatchJSON(`{"id":5, "name":"a"}`))
 		})
 		It("ToReader", func() {
-			b, _ := ioutil.ReadAll(j.ToReader())
+			b, _ := io.ReadAll(j.ToReader())
 			Ω(string(b)).To(MatchJSON(`{"id":5, "name":"a"}`))
 		})
 	})

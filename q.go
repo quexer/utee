@@ -27,6 +27,7 @@ func (p MemQueue) Enq(data interface{}) error {
 	default:
 		return ErrFull
 	}
+
 	return nil
 }
 

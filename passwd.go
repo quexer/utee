@@ -11,10 +11,13 @@ func PasswdHash(password string, cost ...int) (string, error) {
 	if len(cost) > 0 {
 		realConst = cost[0]
 	}
+
 	hash, err := bcrypt.GenerateFromPassword([]byte(password), realConst)
+
 	if err != nil {
 		return "", err
 	}
+
 	return string(hash), nil
 }
 

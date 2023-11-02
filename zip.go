@@ -19,20 +19,25 @@ func Zip(pathToZip string, dest io.Writer) error {
 		if info.IsDir() {
 			return nil
 		}
+
 		if err != nil {
 			return err
 		}
 		// relative path
 		relPath := strings.TrimPrefix(filePath, filepath.Dir(pathToZip))
+
 		zipFile, err := zipWriter.Create(relPath)
 		if err != nil {
 			return err
 		}
+
 		fsFile, err := os.Open(filePath)
 		if err != nil {
 			return err
 		}
+
 		_, err = io.Copy(zipFile, fsFile)
+
 		return err
 	}
 
@@ -41,5 +46,6 @@ func Zip(pathToZip string, dest io.Writer) error {
 	}
 
 	err := zipWriter.Close()
+
 	return err
 }

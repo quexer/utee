@@ -43,6 +43,7 @@ func (pq *priorityQueue2[K, V]) Pop() interface{} {
 	item := old[n-1]
 	item.index = -1 // for safety
 	*pq = old[0 : n-1]
+
 	return item
 }
 
@@ -69,12 +70,14 @@ func NewTimerCache2[K comparable, V any](ttl int, expireCb ...func(key K, value 
 	if len(expireCb) > 0 {
 		cb = expireCb[0]
 	}
+
 	go func() {
 		for {
 			tc.tryPop(time.Now().Unix(), cb)
 			time.Sleep(time.Second)
 		}
 	}()
+
 	return tc
 }
 
@@ -96,6 +99,7 @@ func (p *TimerCache2[K, V]) Put(key K, val V) bool {
 		old.ttl = ttl
 		heap.Fix(&p.q, old.index)
 	}
+
 	return true
 }
 
@@ -131,7 +135,9 @@ func (p *TimerCache2[K, V]) Remove(key K) (V, bool) {
 
 	if item, ok := p.m[key]; ok {
 		item.dead = true // mark dead
+
 		delete(p.m, key)
+
 		return item.value, true
 	} else {
 		var out V
@@ -142,6 +148,7 @@ func (p *TimerCache2[K, V]) Remove(key K) (V, bool) {
 func (p *TimerCache2[K, V]) Len() int {
 	p.lock.RLock()
 	defer p.lock.RUnlock()
+
 	return len(p.m)
 }
 
@@ -170,9 +177,11 @@ func (p *TimerCache2[K, V]) tryPop(tick int64, expireCb func(key K, value V)) {
 func (p *TimerCache2[K, V]) Keys() []K {
 	p.lock.RLock()
 	defer p.lock.RUnlock()
+
 	keys := make([]K, 0, len(p.m))
 	for k := range p.m {
 		keys = append(keys, k)
 	}
+
 	return keys
 }

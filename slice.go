@@ -22,9 +22,11 @@ func SplitSliceIntoN[T any](a []T, n int) [][]T {
 	}
 
 	result := make([][]T, n)
+
 	for i, s := range a {
 		idx := i % n
 		result[idx] = append(result[idx], s)
 	}
+
 	return result
 }

@@ -15,6 +15,7 @@ func (p *SyncMap2[K, V]) Put(key K, val V) {
 	if p.m == nil {
 		p.m = map[K]V{}
 	}
+
 	p.m[key] = val
 }
 
@@ -25,6 +26,7 @@ func (p *SyncMap2[K, V]) Remove(key K) {
 	if p.m == nil {
 		return
 	}
+
 	delete(p.m, key)
 }
 
@@ -50,7 +52,9 @@ func (p *SyncMap2[K, V]) Get(key K) (V, bool) {
 		var v V
 		return v, false
 	}
+
 	val, ok := p.m[key]
+
 	return val, ok
 }
 
@@ -62,5 +66,6 @@ func (p *SyncMap2[K, V]) Keys() []K {
 	for k := range p.m {
 		l = append(l, k)
 	}
+
 	return l
 }
