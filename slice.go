@@ -1,17 +1,18 @@
 package utee
 
 import (
+	"cmp"
+
 	"github.com/samber/lo"
-	"golang.org/x/exp/constraints"
 )
 
 // Min returns the smallest parameter
-func Min[T constraints.Ordered](n ...T) T {
+func Min[T cmp.Ordered](n ...T) T {
 	return lo.Min(n)
 }
 
 // Max returns the biggest parameter
-func Max[T constraints.Ordered](n ...T) T {
+func Max[T cmp.Ordered](n ...T) T {
 	return lo.Max(n)
 }
 

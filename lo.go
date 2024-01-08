@@ -1,10 +1,10 @@
 package utee
 
 import (
+	"cmp"
 	"sort"
 
 	"github.com/samber/lo"
-	"golang.org/x/exp/constraints"
 )
 
 /*
@@ -45,7 +45,7 @@ func Shuffle[T any](collection []T) []T {
 }
 
 // OrderBy order by fn, return ordered copy of slice
-func OrderBy[T any, R constraints.Ordered](l []T, fn func(T) R) []T {
+func OrderBy[T any, R cmp.Ordered](l []T, fn func(T) R) []T {
 	// copy
 	out := append(l[:0:0], l...)
 	sort.Slice(out, func(i, j int) bool {
@@ -56,7 +56,7 @@ func OrderBy[T any, R constraints.Ordered](l []T, fn func(T) R) []T {
 }
 
 // OrderByDescending order by fn descending, return ordered copy of slice
-func OrderByDescending[T any, R constraints.Ordered](l []T, fn func(T) R) []T {
+func OrderByDescending[T any, R cmp.Ordered](l []T, fn func(T) R) []T {
 	out := append(l[:0:0], l...)
 	sort.Slice(out, func(i, j int) bool {
 		return fn(out[j]) < fn(out[i])
@@ -66,7 +66,7 @@ func OrderByDescending[T any, R constraints.Ordered](l []T, fn func(T) R) []T {
 }
 
 // Sum sum slice elements
-func Sum[T constraints.Ordered](l []T) T {
+func Sum[T cmp.Ordered](l []T) T {
 	var out T
 	for _, v := range l {
 		out += v
