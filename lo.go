@@ -64,13 +64,3 @@ func OrderByDescending[T any, R cmp.Ordered](l []T, fn func(T) R) []T {
 
 	return out
 }
-
-// Sum sum slice elements
-func Sum[T cmp.Ordered](l []T) T {
-	var out T
-	for _, v := range l {
-		out += v
-	}
-
-	return out
-}
