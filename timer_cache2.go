@@ -18,18 +18,17 @@ type pqItem2[K comparable, V any] struct {
 // A priorityQueue2 implements heap.Interface and holds Items.
 type priorityQueue2[K comparable, V any] []*pqItem2[K, V]
 
-func (pq priorityQueue2[K, V]) Len() int { return len(pq) }
+func (pq *priorityQueue2[K, V]) Len() int { return len(*pq) }
 
-func (pq priorityQueue2[K, V]) Less(i, j int) bool {
-	return pq[i].ttl < pq[j].ttl
+func (pq *priorityQueue2[K, V]) Less(i, j int) bool {
+	return (*pq)[i].ttl < (*pq)[j].ttl
 }
 
-func (pq priorityQueue2[K, V]) Swap(i, j int) {
-	pq[i], pq[j] = pq[j], pq[i]
-	pq[i].index = i
-	pq[j].index = j
+func (pq *priorityQueue2[K, V]) Swap(i, j int) {
+	(*pq)[i], (*pq)[j] = (*pq)[j], (*pq)[i]
+	(*pq)[i].index = i
+	(*pq)[j].index = j
 }
-
 func (pq *priorityQueue2[K, V]) Push(x interface{}) {
 	n := len(*pq)
 	item := x.(*pqItem2[K, V])
