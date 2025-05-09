@@ -60,11 +60,11 @@ func (p *PerfLog) Done() {
 		}
 
 		sb.WriteString(" ")
-		sb.WriteString(fmt.Sprint(int(p.ticks[i+1].T.Sub(v.T) / time.Millisecond)))
-		sb.WriteString("ms ")
+		sb.WriteString(fmt.Sprint(p.ticks[i+1].T.Sub(v.T).Milliseconds()))
+		sb.WriteString(" ")
 	}
 
-	p.logger.WithField("perf_log_total", totalElapsed.String()).Warnln("perf_log_slow", sb.String())
+	p.logger.WithField("perf_log_total", totalElapsed.Milliseconds()).Warnln("perf_log_slow", sb.String())
 }
 
 // NewPerfLog 生成PerfLog， maxMs 输出阈值，单位为毫秒
