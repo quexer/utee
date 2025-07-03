@@ -5,6 +5,7 @@ import (
 	"sort"
 
 	"github.com/samber/lo"
+	"github.com/samber/lo/mutable"
 )
 
 /*
@@ -39,7 +40,15 @@ func FlatMap[T any, R any](collection []T, fn func(T) []R) []R {
 // Shuffle return a shuffled copy of  collection
 func Shuffle[T any](collection []T) []T {
 	dest := append(collection[:0:0], collection...)
-	lo.Shuffle(dest)
+	mutable.Shuffle(dest)
+
+	return dest
+}
+
+// Reverse return a reversed copy of collection
+func Reverse[T any](collection []T) []T {
+	dest := append(collection[:0:0], collection...)
+	mutable.Reverse(dest)
 
 	return dest
 }
