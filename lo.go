@@ -12,6 +12,11 @@ import (
  wrap and extend github.com/samber/lo
 */
 
+// Clone returns a shallow copy of the collection.
+func Clone[T any](collection []T) []T {
+	return append(collection[:0:0], collection...)
+}
+
 // Map lo.Map without loop index
 func Map[T any, R any](collection []T, fn func(T) R) []R {
 	return lo.Map(collection, func(t T, _ int) R { return fn(t) })
@@ -39,24 +44,23 @@ func FlatMap[T any, R any](collection []T, fn func(T) []R) []R {
 
 // Shuffle return a shuffled copy of  collection
 func Shuffle[T any](collection []T) []T {
-	dest := append(collection[:0:0], collection...)
-	mutable.Shuffle(dest)
+	out := Clone(collection)
+	mutable.Shuffle(out)
 
-	return dest
+	return out
 }
 
 // Reverse return a reversed copy of collection
 func Reverse[T any](collection []T) []T {
-	dest := append(collection[:0:0], collection...)
-	mutable.Reverse(dest)
+	out := Clone(collection)
+	mutable.Reverse(out)
 
-	return dest
+	return out
 }
 
 // OrderBy order by fn, return ordered copy of slice
 func OrderBy[T any, R cmp.Ordered](l []T, fn func(T) R) []T {
-	// copy
-	out := append(l[:0:0], l...)
+	out := Clone(l)
 	sort.Slice(out, func(i, j int) bool {
 		return fn(out[i]) < fn(out[j])
 	})
@@ -66,7 +70,7 @@ func OrderBy[T any, R cmp.Ordered](l []T, fn func(T) R) []T {
 
 // OrderByDescending order by fn descending, return ordered copy of slice
 func OrderByDescending[T any, R cmp.Ordered](l []T, fn func(T) R) []T {
-	out := append(l[:0:0], l...)
+	out := Clone(l)
 	sort.Slice(out, func(i, j int) bool {
 		return fn(out[j]) < fn(out[i])
 	})
