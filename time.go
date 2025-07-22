@@ -20,7 +20,7 @@ type Step struct {
 
 // TimeTracker records the duration of a series of steps
 type TimeTracker struct {
-	sync.Mutex
+	sync.RWMutex
 	startTime time.Time // start time
 	lastTime  time.Time // last recorded time
 	steps     []Step    // list of steps
@@ -59,18 +59,17 @@ func (p *TimeTracker) Total() time.Duration {
 
 // Steps returns the list of all steps for custom formatting
 func (p *TimeTracker) Steps() []Step {
+	p.RLock()
+	defer p.RUnlock()
+
 	return Clone(p.steps)
 }
 
 // ToString returns the string representation of all steps
 // The format is "|-duration-stepName-duration-stepName"
 func (p *TimeTracker) ToString() string {
-	p.Lock()
-	defer p.Unlock()
-
-	if len(p.steps) == 0 {
-		return "|"
-	}
+	p.RLock()
+	defer p.RUnlock()
 
 	var builder strings.Builder
 	builder.WriteString("|")
