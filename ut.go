@@ -85,6 +85,8 @@ func IsPemExpire(b []byte) (bool, error) {
 	return cert.NotAfter.Before(time.Now()), nil
 }
 
+// ParseAddr parse address string like "host:port" into host and port
+// Deprecated: use net.SplitHostPort instead
 func ParseAddr(s string) (string, int, error) {
 	a := strings.Split(s, ":")
 	if len(a) != 2 {
