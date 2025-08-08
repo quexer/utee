@@ -63,12 +63,6 @@ func HmacSha256(s string, key string) string {
 	return hex.EncodeToString(h.Sum(nil))
 }
 
-func Chk(err error) {
-	if err != nil {
-		panic(err)
-	}
-}
-
 func Md5(b []byte) []byte {
 	h := md5.New()
 	h.Write(b)
