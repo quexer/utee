@@ -9,7 +9,7 @@ import (
 	"github.com/quexer/utee"
 )
 
-var _ = Describe("Ut", func() {
+var _ = Describe("Tick", func() {
 	It("TickToTime", func() {
 		now := time.Now()
 		t := utee.NewTick(now).ToTime()

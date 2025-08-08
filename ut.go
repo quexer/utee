@@ -63,12 +63,6 @@ func HmacSha256(s string, key string) string {
 	return hex.EncodeToString(h.Sum(nil))
 }
 
-func Chk(err error) {
-	if err != nil {
-		panic(err)
-	}
-}
-
 func Md5(b []byte) []byte {
 	h := md5.New()
 	h.Write(b)
@@ -91,6 +85,8 @@ func IsPemExpire(b []byte) (bool, error) {
 	return cert.NotAfter.Before(time.Now()), nil
 }
 
+// ParseAddr parse address string like "host:port" into host and port
+// Deprecated: use net.SplitHostPort instead
 func ParseAddr(s string) (string, int, error) {
 	a := strings.Split(s, ":")
 	if len(a) != 2 {
